@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Systems-Based Disorders — Qbank + OCR Lecture Master Table</title>
+<style>
+  :root { --accent:#be123c; --accent-dark:#9f0f33; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(190,18,60,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#fdeef1; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#fce7ec; color:var(--accent-dark); border:1px solid #f3b6c5; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.87em; }
+  th, td { border:1px solid #d4dae0; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#fdf3f5; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.78em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🩺 ABMGG / ACMG Systems-Based Disorders — Master Study Table</h2>
+<p class="sub">Organ-system genetic disorders from the OCR'd <b>System Based Disorders I lecture</b> + matching <b>ACMG Qbank</b> domains (Cardiovascular, Cutaneous, GI, Ophthalmologic) + the <b>renal BOR OCR scan</b>. Source column cites question #s / lecture / OCR. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "white forelock" · "collodion" · "sarcomere" · "long QT" · "Kayser-Fleischer" · "connexin 26" · "imprinting"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Disorder<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">System<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Gene(s)<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Inheritance<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Key Clinical Features<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Diagnosis / Board Pearl<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(6)">Treatment / Management<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(7)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ============ DERMATOLOGIC ============ -->
+    <tr><td>Waardenburg Syndrome</td><td>Dermatologic</td><td>WS1: PAX3 (AD); WS3: PAX3 (AD/AR); others MITF, SNAI2, SOX10, EDN3, EDNRB</td><td>AD (PAX3 also AD/AR)</td><td>Congenital leukoderma, <b>white forelock</b>, heterochromia iridis, choroidal hypopigmentation, hearing loss, telecanthus (dystopia canthorum). WS3: limb anomalies. WS4: Hirschsprung disease</td><td>Disorder of melanocyte development/migration; dystopia canthorum by W index</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Piebaldism</td><td>Dermatologic</td><td>KIT, SNAI2</td><td>AD</td><td>Patchy hypopigmentation, <b>white forelock</b>, heterochromia iridis</td><td>Disorder of melanocyte development/migration</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Oculocutaneous Albinism (OCA1)</td><td>Dermatologic</td><td>TYR</td><td>AR</td><td>White skin/hair, nystagmus, decreased acuity (melanin synthesis defect)</td><td>Disorder of melanin synthesis</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Oculocutaneous Albinism (OCA2)</td><td>Dermatologic</td><td>OCA2</td><td>AR</td><td>White/yellow hair, nystagmus, decreased acuity</td><td>Disorder of melanin synthesis</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Oculocutaneous Albinism (OCA3)</td><td>Dermatologic</td><td>TYRP1</td><td>AR</td><td>Copper-red skin/hair, freckles, nystagmus, strabismus</td><td>Disorder of melanin synthesis</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Oculocutaneous Albinism (OCA4–8)</td><td>Dermatologic</td><td>SLC45A2 + other genes</td><td>AR</td><td>White hair, nystagmus, decreased acuity</td><td>Disorder of melanin synthesis</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Ocular Albinism (OA1)</td><td>Dermatologic</td><td>GPR143</td><td>X-linked recessive</td><td>Normal skin/hair; decreased acuity, refractive errors, nystagmus (ocular pigment reduction only)</td><td>Melanin synthesis disorder; X-linked pattern</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Hermansky-Pudlak Syndrome</td><td>Dermatologic</td><td>Multiple genes (HPS1–HPS11)</td><td class="gap">[not in source]</td><td>Oculocutaneous albinism, foveal hypoplasia; <b>absent platelet delta granules → bleeding diathesis</b>; pulmonary fibrosis, colitis, renal failure, immunodeficiency</td><td>Defect in melanosome formation; bleeding from platelet dense-body deficiency</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Chediak-Higashi Syndrome</td><td>Dermatologic</td><td>LYST</td><td>AR</td><td>Hypopigmentation, silvery-gray sheen, partial albinism; <b>giant granules in neutrophils</b>, neutropenia, HLH, immunodeficiency, mild bleeding; late neuropathy</td><td>Defect in melanosome formation; giant lysosomal granules</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Griscelli Syndrome</td><td>Dermatologic</td><td>MYO5A, RAB27A, MLPH (3 types)</td><td class="gap">[not in source]</td><td>Hypopigmentation, <b>silver-gray hair</b>; developmental delay, seizures, decreased platelet function, immunodeficiency, HLH</td><td>Melanosome transfer defect (3 types by gene)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Hypohidrotic (X-linked) Ectodermal Dysplasia</td><td>Dermatologic</td><td>EDA (XLR); EDAR, EDARADD, WNT10A (AD/AR)</td><td>XLR (EDA); AD/AR (others)</td><td><b>Hypohidrosis</b> (dry skin), anodontia/hypodontia, fine/sparse hair, spooned brittle nails, depressed nasal bridge</td><td>Hypohidrotic ectodermal dysplasia</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>p63-Related Ectodermal Dysplasia</td><td>Dermatologic</td><td>TP63</td><td>AD</td><td>Hypohidrosis, anodontia/hypodontia, sparse hair, <b>ankyloblepharon</b>, cleft lip/palate, split-hand/foot malformation, hypoplastic breasts/nipples</td><td>p63 spectrum (6 overlapping phenotypes)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Clouston Syndrome (Hidrotic ED)</td><td>Dermatologic</td><td>GJB6</td><td>AD</td><td>Hyperkeratosis, no dental anomalies, partial-to-complete <b>alopecia</b>, dystrophic nails, <b>normal sweating</b>, short stature</td><td>Hidrotic ectodermal dysplasia (normal sweating vs hypohidrotic forms)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Witkop Syndrome (Tooth-and-Nail)</td><td>Dermatologic</td><td>MSX1</td><td>AD</td><td>Normal sweating, small/absent teeth, normal hair, <b>thin friable nails with pits</b></td><td>Ectodermal dysplasia (tooth/nail predominant)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Incontinentia Pigmenti</td><td>Dermatologic</td><td>IKBKG (NEMO)</td><td>XLD, male-lethal</td><td>Skin lesions evolve through <b>4 stages along lines of Blaschko</b> (blistering → wart-like → swirling hyperpigmentation → linear hypopigmentation); alopecia, hypodontia, retinal neovascularization, seizures/ID</td><td>XLD male-lethal; ~65% exon 4–10 deletion of IKBKG</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Ichthyosis Vulgaris</td><td>Dermatologic</td><td>FLG (filaggrin)</td><td>Semidominant</td><td><b>Most common ichthyosis (1:100)</b>; associated with eczema and allergies</td><td>Most common form of ichthyosis</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>X-Linked Ichthyosis (Steroid Sulfatase Deficiency)</td><td>Dermatologic</td><td>STS</td><td>X-linked</td><td><b>2nd most common ichthyosis (1 in 2,000 boys)</b>; cryptorchidism, ADHD/autism associations; STS gene deletions</td><td>X-linked; STS gene deletions</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>AR Congenital Ichthyosis (incl. Harlequin &amp; Lamellar)</td><td>Dermatologic</td><td>TGM1 (most common, ~1/3); multiple genes</td><td>AR</td><td><b>Collodion membrane/baby</b> (80–90% of TGM1); severe = harlequin ichthyosis; other forms = erythroderma & lamellar</td><td>AR congenital ichthyosis; TGM1 most common gene</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Epidermolysis Bullosa Simplex</td><td>Dermatologic</td><td>KRT5 & KRT14 (&gt;70%)</td><td>AD/AR</td><td>Fragile skin, blistering/scarring; <b>splitting in or above the basal layer</b></td><td>EB subtype by blister plane (basal layer)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Junctional Epidermolysis Bullosa</td><td>Dermatologic</td><td>LAMB3 (70%)</td><td>AR</td><td>Blistering/scarring; <b>splitting within the basement membrane</b></td><td>EB subtype: within basement membrane</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Dystrophic Epidermolysis Bullosa</td><td>Dermatologic</td><td>COL7A1</td><td>AD/AR</td><td>Blistering; <b>scarring below the basement membrane</b></td><td>EB subtype: below basement membrane</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Kindler Syndrome</td><td>Dermatologic</td><td>FERMT1 (kindlin-1)</td><td>AR</td><td>Skin fragility/blistering; <b>multiple cleavage planes</b></td><td>EB-spectrum with multiple cleavage planes</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Neurofibromatosis Type 1</td><td>Dermatologic / neurocutaneous</td><td>NF1 (neurofibromin / RAS-GAP)</td><td>AD</td><td><b>≥6 café-au-lait macules</b>, axillary/inguinal freckling, neurofibromas (incl. plexiform), Lisch nodules, optic glioma, osseous lesions; MPNST ~8–13%</td><td>Clinical NIH criteria (≥2 of 7); LOF → hyperactive RAS-MAPK</td><td class="gap">[not in source]</td><td class="src"><span class="src-q">Cutaneous Q1</span></td></tr>
+    <tr><td>Tuberous Sclerosis Complex</td><td>Dermatologic / neurocutaneous</td><td>TSC1 (hamartin), TSC2 (tuberin)</td><td>AD (~66% de novo)</td><td>≥3 <b>hypomelanotic ash-leaf macules</b>, facial angiofibromas, shagreen patch; cortical tubers, SEGA, renal angiomyolipomas, LAM, cardiac rhabdomyoma (regress)</td><td>2 major or 1 major+2 minor, or pathogenic TSC1/TSC2; mTORC1 disinhibition</td><td>mTOR inhibitors (everolimus/sirolimus) for SEGA/AML/LAM/epilepsy</td><td class="src"><span class="src-q">Cutaneous Q2</span></td></tr>
+    <tr><td>Gorlin Syndrome (Nevoid BCC)</td><td>Dermatologic / tumor predisposition</td><td>PTCH1 (9q22); SUFU</td><td>AD (~97% penetrance)</td><td>Triad: <b>multiple BCCs (&lt;30y)</b> + jaw keratocysts + calcified falx cerebri; bifid ribs, macrocephaly, palmar/plantar pits, desmoplastic medulloblastoma</td><td>PTCH1 LOF → constitutive Hedgehog; <b>avoid radiation</b></td><td>Vismodegib (SMO inhibitor) for advanced/multiple BCC; avoid radiotherapy</td><td class="src"><span class="src-q">Cutaneous Q3</span></td></tr>
+    <tr><td>Xeroderma Pigmentosum</td><td>Dermatologic / DNA repair</td><td>NER genes XPA–XPG; POLH (XPV)</td><td>AR (8 complementation groups)</td><td><b>Severe UV sensitivity</b>, early freckling, ~10,000× skin cancer risk (median first cancer ~8y), ocular keratitis; neuro (de Sanctis-Cacchione) in some groups</td><td>Defective nucleotide excision repair of UV lesions; XPV no neuro involvement</td><td class="gap">[not in source]</td><td class="src"><span class="src-q">Cutaneous Q4</span></td></tr>
+
+    <!-- ============ CARDIOVASCULAR ============ -->
+    <tr><td>Hypertrophic Cardiomyopathy (HCM)</td><td>Cardiovascular — cardiomyopathy</td><td><b>Sarcomere: MYBPC3 + MYH7 (~80%)</b>; TNNT2, TNNI3, TPM1. Syndromic: LAMP2 (Danon), GLA (Fabry), GAA (Pompe)</td><td>AD (isolated); syndromic varies</td><td>Asymmetric septal hypertrophy, <b>myocyte disarray</b>, fibrosis; LVOT obstruction (HOCM); syncope, arrhythmia, sudden death. TNNT2 → mild hypertrophy w/ high SCD risk</td><td>Max LV wall thickness <b>≥15 mm (no FHx), ≥13 mm w/ FHx</b>; SCD markers: MWT ≥30, FHx SCD, syncope, NSVT, apical aneurysm, EF&lt;50%, LGE; cascade = site-specific testing</td><td>Beta-blockers; <b>mavacamten (myosin inhibitor)</b>; septal myectomy/alcohol ablation; primary-prevention ICD if ≥1 major risk marker</td><td class="src"><span class="src-q">Cardio Q1, Q2, Q3</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Dilated Cardiomyopathy (DCM)</td><td>Cardiovascular — cardiomyopathy</td><td><b>TTN truncating (~15-25% familial)</b>, LMNA, MYH7; syndromic TAZ (Barth)</td><td>AD (most); also XL, mito</td><td>Dilated LV, low EF; may be silent until CHF/thromboembolism; arrhythmias. <b>TTNtv pathogenic mainly in A-band exons (PSI ≥90%)</b></td><td>DCM gene panel; TTN interpretation = location + PSI (A-band high-PSI); surveillance of 1st-degree relatives q2-5yr</td><td>Standard HF/GDMT; ICD per EF; transplant end-stage</td><td class="src"><span class="src-q">Cardio Q4, Q5</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>LMNA-Related (Arrhythmogenic) DCM</td><td>Cardiovascular — cardiomyopathy (arrhythmogenic)</td><td><b>LMNA</b></td><td>AD</td><td>Arrhythmogenic DCM: <b>early conduction disease (AV block) and malignant ventricular arrhythmias preceding LV dysfunction</b>; SCD risk independent of LVEF</td><td>LMNA risk score: non-missense variant, NSVT, LVEF &lt;45%, male, AV block. <b>≥2 → consider ICD even at preserved EF</b></td><td>Primary-prevention ICD (higher EF threshold than generic DCM); pacemaker alone insufficient</td><td class="src"><span class="src-q">Cardio Q5</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Arrhythmogenic RV Cardiomyopathy (ARVC)</td><td>Cardiovascular — cardiomyopathy (arrhythmogenic)</td><td><b>Desmosomal: PKP2 (~40%)</b>, DSG2, DSC2, DSP, JUP; biallelic JUP/DSP → Naxos/Carvajal</td><td>AD (biallelic → Naxos/Carvajal)</td><td>RV dilation, fibrofatty replacement; <b>T-wave inversions V1-V3</b>, late potentials; palpitations, exertional syncope, VT/SCD; endurance athletes highest risk</td><td>2010 revised <b>Task Force Criteria</b> (6 categories); biopsy NOT required</td><td><b>Restrict high-intensity/endurance exercise</b> (accelerates phenotype) — even gene-positive/phenotype-negative; catheter ablation reduces VT burden</td><td class="src"><span class="src-q">Cardio Q6</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Long QT Syndrome (LQTS)</td><td>Cardiovascular — channelopathy</td><td>LQT1 <b>KCNQ1 (IKs↓)</b>; LQT2 <b>KCNH2 (IKr↓)</b>; LQT3 <b>SCN5A gain-of-function (late INa↑)</b>; Jervell-Lange-Nielsen (KCNQ1, AR)</td><td>AD; JLN AR</td><td>QTc prolongation; syncope/SCA. <b>Triggers: LQT1 exercise/swimming; LQT2 auditory/postpartum; LQT3 sleep/rest</b> (LQT3 more lethal). Concealed LQTS common (normal resting QTc)</td><td>Bazett QTc ≥480 (asymptomatic) or ≥460 + syncope; Schwartz ≥3.5; exercise/recovery QTc + genetic testing</td><td><b>Beta-blockers first-line (nadolol)</b>; <b>LQT3 add mexiletine</b>; ICD/sympathectomy high-risk; swimming precautions in LQT1</td><td class="src"><span class="src-q">Cardio Q7, Q8</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Brugada Syndrome</td><td>Cardiovascular — channelopathy</td><td><b>SCN5A loss-of-function</b> (~20%)</td><td>AD</td><td><b>Type 1 pattern (coved ST elevation ≥2 mm V1-V2)</b>, spontaneous or drug-induced; conduction disease; VT/SCD</td><td>Type 1 pattern (spontaneous/unmasked). <b>Avoid class I antiarrhythmics (flecainide, procainamide) — they unmask Brugada</b></td><td>ICD for secondary prevention or spontaneous type 1 + syncope; <b>quinidine</b> for electrical storm</td><td class="src"><span class="src-q">Cardio Q9</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Catecholaminergic Polymorphic VT (CPVT)</td><td>Cardiovascular — channelopathy</td><td><b>RYR2 (AD, ~60%)</b>; CASQ2 (AR)</td><td>AD (RYR2); AR (CASQ2)</td><td><b>Normal resting ECG; bidirectional VT on exercise/emotion</b>; exertional syncope/SCA; pediatric onset. RyR2 Ca²⁺ leak → delayed afterdepolarizations</td><td>Bidirectional VT on exercise stress test + normal QTc/no Brugada. DDx bidirectional VT: <b>digoxin toxicity</b></td><td><b>Nadolol + exercise restriction</b>; add <b>flecainide</b> for breakthrough; LCSD if refractory; ICD only secondary prevention</td><td class="src"><span class="src-q">Cardio Q9</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Marfan Syndrome</td><td>Cardiovascular — aortopathy / connective tissue</td><td><b>FBN1</b> (~25% de novo)</td><td>AD</td><td><b>Aortic root dilation/dissection, MV prolapse</b>; <b>ectopia lentis UP/superotemporal</b>; dolichostenomelia, pectus, scoliosis, wrist+thumb sign, dural ectasia, pneumothorax</td><td><b>Revised Ghent (Ghent-2)</b>: aortic root z≥2 + ectopia lentis = diagnostic. Lens UP (vs DOWN in homocystinuria)</td><td>Beta-blocker + <b>losartan/ARB</b>; root replacement ≥5.0 cm (or ≥4.5 w/ risk or planned pregnancy); stop ARB in pregnancy; avoid contact/isometric sports, fluoroquinolones, LASIK</td><td class="src"><span class="src-q">Cardio Q10, Q11</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Loeys-Dietz Syndrome (LDS)</td><td>Cardiovascular — aortopathy / connective tissue</td><td><b>TGF-β pathway: TGFBR1/2, SMAD3, TGFB2/3</b> (many de novo)</td><td>AD</td><td>Triad: <b>hypertelorism + bifid uvula/cleft palate + arterial tortuosity/aneurysm</b>; widespread tortuosity & distal aneurysms; craniosynostosis; <b>ectopia lentis ABSENT</b>; translucent skin</td><td>Hypertelorism + bifid uvula + tortuous arteries, NO lens dislocation distinguishes from Marfan. Image entire arterial tree</td><td><b>Dissection at smaller diameters than Marfan</b>; prophylactic root repair often ≥4.0-4.5 cm; losartan + beta-blockers; avoid contact sports</td><td class="src"><span class="src-q">Cardio Q12</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Vascular Ehlers-Danlos (vEDS, type IV)</td><td>Cardiovascular — aortopathy / connective tissue</td><td><b>COL3A1</b> (glycine-substitution = severe)</td><td>AD</td><td><b>Medium-artery rupture/dissection</b> and <b>spontaneous bowel (sigmoid) / uterine rupture</b>; thin translucent skin, easy bruising, acrogeria, characteristic facies; 5% maternal mortality/pregnancy</td><td>2017 EDS criteria: arterial rupture &lt;40, sigmoid perforation, 3rd-trimester uterine rupture, carotid-cavernous fistula. Dx: COL3A1 or type III procollagen analysis</td><td><b>Celiprolol reduces arterial events</b>; avoid arteriography (use CTA/MRA) and elective vascular intervention except rupture</td><td class="src"><span class="src-q">Cardio Q13</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Familial Hypercholesterolemia, Heterozygous (HeFH)</td><td>Cardiovascular — lipid</td><td><b>LDLR (~80-90%)</b>, APOB, PCSK9 (GOF)</td><td>Autosomal (semi)dominant</td><td>Very high LDL-C; early ASCVD; <b>tendon xanthomas (Achilles)</b>, xanthelasmas, premature corneal arcus. ~1:200-250</td><td><b>Dutch Lipid Clinic Network (DLCN) score</b> / Simon Broome criteria; FH panel LDLR/APOB/PCSK9</td><td>High-intensity statin (≥50% LDL reduction) + ezetimibe; PCSK9 inhibitor; genetic testing enables <b>cascade screening</b></td><td class="src"><span class="src-q">Cardio Q14</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Familial Hypercholesterolemia, Homozygous (HoFH)</td><td>Cardiovascular — lipid</td><td>Biallelic LDLR/APOB/PCSK9 (or AR LDLRAP1); receptor-null vs receptor-defective</td><td>AR / biallelic</td><td>LDL often &gt;400-600; <b>planar (interdigital) + tendon + cutaneous xanthomas in childhood</b>; <b>supravalvular aortic stenosis</b>; ASCVD in 1st-2nd decade. ~1:160,000-300,000</td><td>Biallelic pathogenic variants. Xanthoma DDx: HoFH, sitosterolemia, cerebrotendinous xanthomatosis. Response depends on residual LDLR</td><td>Statin + ezetimibe; PCSK9i (needs residual LDLR); <b>lipoprotein apheresis; evinacumab (anti-ANGPTL3, LDLR-independent)</b>; lomitapide; liver transplant</td><td class="src"><span class="src-q">Cardio Q15</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+
+    <!-- ============ GI / HEPATIC / RENAL ============ -->
+    <tr><td>Alpha-1 Antitrypsin Deficiency</td><td>GI/hepatic</td><td>SERPINA1</td><td>AR (codominant Pi alleles)</td><td><b>PiZZ</b>; lower-lobe emphysema in non-smoker + hepatic cirrhosis/HCC; Z-AAT polymerizes → ER retention (liver injury) + low secreted AAT (lung). Null homozygotes: emphysema but NO liver disease</td><td>Low serum AAT + biallelic SERPINA1 / Pi typing; liver bx <b>PAS-positive, diastase-resistant globules</b></td><td>No smoking/alcohol; IV AAT augmentation for lung (FEV1 35-65%); transplant corrects genotype</td><td class="src"><span class="src-q">GI Q5</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Hirschsprung Disease (HSCR)</td><td>GI</td><td>RET (major); PHOX2B</td><td>AD LOF (RET); complex, M:F 5:1</td><td><b>Absent ganglion cells</b> (Meissner & Auerbach plexuses) of terminal rectum extending proximal; failed neural-crest migration. 80% rectosigmoid. 12% syndromic (esp. Down). PHOX2B → HSCR + congenital central hypoventilation</td><td>Post-birth megacolon; rectal biopsy (absent ganglia)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Alagille Syndrome</td><td>GI/hepatic</td><td>JAG1 (Jagged-1, Notch ligand); NOTCH2</td><td>AD</td><td><b>Paucity of intrahepatic bile ducts</b>; cardiac (peripheral pulmonary artery stenosis ~95%); butterfly vertebrae; posterior embryotoxon; triangular face; ↑HCC risk</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Hereditary Hemochromatosis</td><td>GI/hepatic</td><td>HFE</td><td>AR (C282Y/C282Y)</td><td>Fatigue, MCP arthralgias, ↑LFTs, cirrhosis, diabetes; <b>C282Y/C282Y</b> = ~90% of HH; ↑intestinal iron absorption (hepcidin/ferroportin)</td><td>↑Transferrin saturation, ↑ferritin; HFE genotyping; liver bx only if ferritin &gt;1000 or ↑transaminases</td><td>Therapeutic phlebotomy to ferritin 50-100; reassure compound hets w/ normal iron</td><td class="src"><span class="src-q">GI Q1</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Wilson Disease</td><td>GI/hepatic</td><td>ATP7B (13q14)</td><td>AR</td><td>Young adult w/ tremor, dysarthria, neuropsychiatric + hepatic injury; <b>Kayser-Fleischer rings</b>. Impaired biliary Cu excretion → hepatic/CNS/corneal Cu overload (contrast Menkes/ATP7A)</td><td>Low ceruloplasmin; KF rings; 24-hr urine Cu &gt;100; liver Cu &gt;250; <b>Leipzig score ≥4</b></td><td>Chelation (penicillamine/trientine) or zinc; liver transplant curative</td><td class="src"><span class="src-q">GI Q2</span></td></tr>
+    <tr><td>Lynch Syndrome</td><td>GI / hereditary cancer</td><td>MLH1, MSH2, MSH6, PMS2 (+EPCAM)</td><td>AD</td><td><b>MMR deficiency</b> → CRC, endometrial, ovarian; early CRC. IHC loss guides gene; lifetime CRC 40-80% (MLH1/MSH2) vs 10-22% (MSH6)</td><td>Tumor MMR IHC + germline sequencing; MLH1 promoter methylation if MLH1 lost (sporadic). IHC loss alone sufficient to test</td><td class="gap">[not in source]</td><td class="src"><span class="src-q">GI Q3</span></td></tr>
+    <tr><td>Familial Adenomatous Polyposis (FAP)</td><td>GI / hereditary cancer</td><td>APC</td><td>AD (~100% penetrance)</td><td>Hundreds-thousands adenomatous polyps + duodenal/gastric polyps. <b>Codon 1309</b> = severe (&gt;1,000 polyps, earlier CRC); AFAP = milder. Gardner = + osteomas/desmoids</td><td>Colonoscopy + APC sequencing + cascade testing; duodenal Spigelman staging</td><td>Prophylactic proctocolectomy (IPAA) by age 20-25 or per polyp burden</td><td class="src"><span class="src-q">GI Q4</span></td></tr>
+    <tr><td>Polycystic Kidney Disease, AD (ADPKD)</td><td>Renal</td><td>PKD1 (~78%), PKD2 (~15%)</td><td>AD</td><td>Late-onset <b>bilateral renal cysts</b>; liver/pancreatic cysts; ↑intracranial aneurysm risk; HTN; renal failure by 60. PKD1+TSC2 contiguous deletion → in-utero PKD + TSC</td><td>Renal US ages 15-39: ≥3 cysts → high PPV; mostly sequence variants</td><td><b>Tolvaptan (V2 antagonist)</b>; ACEI/ARB for HTN; clip aneurysms; avoid nephrotoxins/caffeine</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Polycystic Kidney Disease, AR (ARPKD)</td><td>Renal/hepatic</td><td>PKHD1</td><td>AR</td><td>Congenital <b>hepatorenal fibrocystic syndrome</b>; perinatal: enlarged echogenic kidneys + <b>pulmonary hypoplasia (~30% die &lt;1yr)</b>; childhood form more hepatic (congenital hepatic fibrosis)</td><td>Biallelic PKHD1; US enlarged echogenic kidneys, dilated bile ducts; parents without renal disease</td><td>Neonatal respiratory support; dialysis/transplant; liver/combined transplant; vaccinate encapsulated bacteria</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Branchiootorenal (BOR) Spectrum Disorder</td><td>Renal</td><td>EYA1 (~40%), SIX1 & SIX5 (~5%); ~50% no gene</td><td>AD</td><td><b>Ear pits/tags + hearing loss + renal malformation</b> (hypoplasia → bilateral agenesis → ESRD); branchial fistulae/cysts. BOS = BOR without renal anomalies</td><td>Clinical criteria and/or EYA1/SIX1/SIX5 variant; negative panel does NOT exclude (~50% no gene)</td><td>Surgical excision of branchial fistulae/cysts; hearing aids/cochlear implants</td><td class="src"><span class="src-lec">OCR: systems-based renal scan</span></td></tr>
+
+    <!-- ============ SENSORY — OPHTHALMOLOGIC ============ -->
+    <tr><td>Nonsyndromic Retinitis Pigmentosa</td><td>Sensory — ophthalmologic</td><td>RHO (AD); RPGR (~80% of X-linked); many genes</td><td>AR, AD, XL</td><td>Photoreceptor/RPE degeneration; <b>night blindness + progressive peripheral vision loss</b>; bone-spicule pigmentation</td><td>Abnormal ERG & fields; ~50% unknown gene; X-linked most severe; carrier females may show tapetal reflex</td><td>Gene therapy trials (AAV5-RPGR); RPGR ORF15 sequencing</td><td class="src"><span class="src-q">Ophtho Q1</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Usher Syndrome</td><td>Sensory — ophthalmologic + hearing</td><td>T1: MYO7A, CDH23, PCDH15; T2: USH2A; T3: CLRN1</td><td>AR</td><td><b>Retinitis pigmentosa + congenital SNHL</b> ± vestibular dysfunction. T1 profound deafness + vestibular areflexia; T2 mod deafness, adult RP; T3 progressive</td><td>USH2A = #1 gene in syndromic RP; audiogram distinguishes from isolated arRP</td><td>T2 hearing aids; antisense oligonucleotide (USH2A exon 13) in trials</td><td class="src"><span class="src-q">Ophtho Q2</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Leber Congenital Amaurosis</td><td>Sensory — ophthalmologic</td><td>RPE65 (~6-16%); CRX; ~20 types</td><td>AR</td><td><b>Severe visual impairment from infancy</b>, nystagmus, sluggish pupils, photophobia; oculodigital (Franceschetti) sign</td><td>Flat (non-detectable) ERG; biallelic RPE65 + viable retinal cells (OCT) required for therapy</td><td><b>Voretigene neparvovec (Luxturna)</b> — AAV2-RPE65 subretinal; first FDA-approved in-vivo gene therapy</td><td class="src"><span class="src-q">Ophtho Q3</span> <span class="src-lec">+ Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Stargardt Disease (STGD1)</td><td>Sensory — ophthalmologic</td><td>ABCA4</td><td>AR</td><td><b>Progressive central vision loss 1st-2nd decade</b> (most common juvenile macular dystrophy); pisciform flecks; beaten-bronze macula</td><td><b>Dark choroid sign on fluorescein angiography</b>; toxic A2E/lipofuscin accumulation</td><td>None FDA-approved (ABCA4 too large for single AAV); dual-vector trials</td><td class="src"><span class="src-q">Ophtho Q4</span></td></tr>
+    <tr><td>Best Vitelliform Macular Dystrophy</td><td>Sensory — ophthalmologic</td><td>BEST1 (bestrophin-1)</td><td>AD (AR bestrophinopathy)</td><td><b>"Egg-yolk" subretinal foveal lesion</b>; stages vitelliform → pseudohypopyon → atrophic; acuity often preserved decades</td><td><b>EOG reduced Arden ratio (&lt;1.5)</b> abnormal even when ERG normal — useful for family screening</td><td>Anti-VEGF for CNV</td><td class="src"><span class="src-q">Ophtho Q5</span></td></tr>
+    <tr><td>Aniridia / WAGR Syndrome</td><td>Sensory — ophthalmologic</td><td>PAX6 (11p13); contiguous deletion w/ WT1 (WAGR)</td><td>AD (1/3 de novo)</td><td><b>Iris hypoplasia + foveal hypoplasia → nystagmus</b>; keratopathy, cataract, glaucoma. WAGR: Wilms, Aniridia, GU anomalies, ID</td><td><b>ALL sporadic aniridia needs CMA/FISH at 11p13 to exclude WAGR</b> before Wilms decisions; Wilms risk ~45-57% in WAGR</td><td>WAGR: renal ultrasound every 3 months until age 8</td><td class="src"><span class="src-q">Ophtho Q6</span></td></tr>
+    <tr><td>Norrie Disease</td><td>Sensory — ophthalmologic + hearing</td><td>NDP (norrin)</td><td>X-linked recessive</td><td><b>Bilateral congenital blindness with retrolental fibrovascular masses (pseudoglioma) + retinal detachment</b>; ~1/3 progressive SNHL; cognitive/behavioral issues; maternal-uncle pedigree clue</td><td>Distinguish from retinoblastoma & FEVR</td><td>Usually no useful vision at presentation</td><td class="src"><span class="src-q">Ophtho Q7</span></td></tr>
+    <tr><td>Familial Exudative Vitreoretinopathy (FEVR)</td><td>Sensory — ophthalmologic</td><td>FZD4, LRP5, TSPAN12 (AD); NDP (XLR)</td><td>AD or AR (NDP XLR)</td><td><b>Avascular peripheral retina → traction, exudation, detachment without prematurity</b> (ROP-like without prematurity). Biallelic LRP5 = osteoporosis-pseudoglioma</td><td>Screen siblings — asymptomatic avascular retina is treatable; DDx ROP</td><td>Early vitrectomy/laser may salvage vision</td><td class="src"><span class="src-q">Ophtho Q7</span></td></tr>
+    <tr><td>Congenital Cataract (isolated)</td><td>Sensory — ophthalmologic</td><td>Crystallins (CRYAA/BB2/GD), connexins (GJA8/GJA3)</td><td>AD most common (also AR, XL)</td><td><b>Failed red reflex / bilateral congenital cataracts</b> without dysmorphism; bilateral cases more often genetic</td><td>Exclude syndromic causes: galactosemia (urine reducing substances), TORCH, Ca/phos, CMA; gene panel for isolated familial</td><td>Urgent surgical referral to prevent deprivation amblyopia</td><td class="src"><span class="src-q">Ophtho Q8</span></td></tr>
+    <tr><td>Axenfeld-Rieger Syndrome</td><td>Sensory — ophthalmologic</td><td>PITX2 (type 1); FOXC1 (type 3)</td><td>AD</td><td>Anterior segment dysgenesis: <b>posterior embryotoxon + iris strands to cornea + iris hypoplasia</b>; ~50% glaucoma. PITX2: dental anomalies, redundant periumbilical skin</td><td>Posterior embryotoxon alone common (~15%) — dysgenic only with iris strands/systemic features</td><td>Lifelong glaucoma surveillance; surgery if IOP uncontrolled</td><td class="src"><span class="src-q">Ophtho Q9</span></td></tr>
+    <tr><td>Gyrate Atrophy</td><td>Sensory — ophthalmologic</td><td>OAT (ornithine aminotransferase)</td><td>AR</td><td><b>Night blindness → field constriction → central vision loss</b>; chorioretinal atrophic patches</td><td>Inborn error of metabolism — ↑ornithine</td><td>Low-arginine diet ± pyridoxine</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Red-Green Color Blindness</td><td>Sensory — ophthalmologic</td><td>OPN1LW / OPN1MW (X-linked)</td><td>X-linked recessive</td><td><b>Abnormal color vision</b>; 8% European males. Protanopia (no red cones), deuteranopia (no green cones)</td><td>Color vision abnormal if green/red opsin gene not expressed</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+
+    <!-- ============ SENSORY — HEARING ============ -->
+    <tr><td>Nonsyndromic Hearing Loss</td><td>Sensory — hearing</td><td>AR: GJB2 (connexin 26) ± GJB6; AD/XL/mito forms</td><td>AR, AD, XL, mitochondrial</td><td><b>GJB2/connexin 26 = most common cause of severe deafness</b>; 80% of prelingual deafness is genetic (~70% nonsyndromic); GJB2 carrier rate ~3%</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Pendred Syndrome</td><td>Sensory — hearing</td><td>SLC26A4 (pendrin)</td><td>AR</td><td>Syndromic hearing loss (listed among AR syndromic deafness); goiter (classic teaching, not detailed in source)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+
+    <!-- ============ EPIGENETIC / IMPRINTING ============ -->
+    <tr><td>Prader-Willi Syndrome</td><td>Epigenetic / imprinting</td><td>15q11.2-q13 — loss of <b>paternal</b> expression</td><td>Imprinting (paternal del, maternal UPD, imprinting defect)</td><td><b>Loss of paternal 15q expression</b>; infancy hypotonia/poor feeding → hyperphagia/morbid obesity; ID, hypogonadism, short stature, behavioral issues</td><td>DNA methylation analysis (identifies maternal-only imprint); SNP array for mechanism (del/UPD)</td><td>Growth hormone for short stature</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Angelman Syndrome</td><td>Epigenetic / imprinting</td><td>UBE3A (15q11.2-q13) — loss of <b>maternal</b> expression</td><td>Imprinting (maternal del, paternal UPD, imprinting defect, UBE3A mutation)</td><td><b>Loss of maternal 15q expression</b>; severe ID + microcephaly, epilepsy, severe speech impairment, ataxia/tremulousness, <b>happy demeanor/laughing</b></td><td>Abnormal EEG; parent-specific methylation (~80%) + UBE3A sequencing (~90% total)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Beckwith-Wiedemann Syndrome</td><td>Epigenetic / imprinting</td><td>11p15.5 (IC2 LOM ~50%; paternal UPD ~20%)</td><td>Imprinting</td><td><b>Macrosomia, macroglossia, omphalocele, hemihyperplasia</b>; neonatal hypoglycemia; ear pits/creases; tumor risk (Wilms, hepatoblastoma)</td><td>Methylation/CMA at 11p15; tumor surveillance per molecular subtype</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Russell-Silver Syndrome</td><td>Epigenetic / imprinting</td><td>11p15.5 IC1 hypomethylation (35-67%); maternal UPD7 (7-10%)</td><td>Imprinting</td><td><b>IUGR/low birth weight, relative macrocephaly, prominent forehead, body asymmetry</b>; FTT, triangular facies, micrognathia</td><td>Testing confirms ~60%; ~30-40% clinically diagnosed are test-negative</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Transient Neonatal Diabetes</td><td>Epigenetic / imprinting</td><td>6q24: PLAGL1/HYMAI (paternally expressed)</td><td>Imprinting (UPD(6)pat, dup(6q24)pat, maternal hypomethylation)</td><td><b>Severe IUGR + neonatal hyperglycemia, resolving by ~18 months</b>; dehydration, NO ketoacidosis; ± macroglossia, umbilical hernia</td><td>Methylation/CNV at 6q24</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>GNAS Imprinting Disorders (AHO / pseudohypoparathyroidism)</td><td>Epigenetic / imprinting</td><td>GNAS (Gsα), tissue-specific imprinting</td><td>Imprinting (parent-of-origin)</td><td><b>Albright hereditary osteodystrophy</b> (paternal Gsα): ID + subcutaneous calcification, brachydactyly. Pseudohypoparathyroidism-Ia (maternal): AHO + multi-hormone resistance. PHP-Ib: loss of maternal methylation</td><td>Parent-of-origin determines phenotype; methylation analysis</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+
+    <!-- ============ PSYCHIATRIC ============ -->
+    <tr><td>Autism Spectrum Disorder</td><td>Psychiatric</td><td>Genetic cause identified in 10-30%</td><td>Multifactorial (heritability 40-80%)</td><td><b>Social communication deficits + restricted/repetitive behaviors</b>; severity levels 1-3; regression ~30%, seizures ~25%, macrocephaly ~30%</td><td>Clinical diagnosis; if cause unknown, sibling recurrence ~5-10%; genetic workup (CMA/FMR1/exome)</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Schizophrenia</td><td>Psychiatric</td><td>22q11.2 deletion; SETD1A LOF</td><td>Multifactorial (MZ twin concordance ~50%)</td><td><b>Delusions, hallucinations, disorganized speech/behavior, flattened affect</b></td><td>Candidate genes overlap across psychiatric disorders; consider 22q11.2 deletion</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+    <tr><td>Affective Disorders (MDD / Bipolar)</td><td>Psychiatric</td><td class="gap">[not in source]</td><td>Multifactorial, high heritability</td><td><b>MDD</b>: dysphoria, sleep/appetite changes, guilt, suicidal ideation (no mania). <b>Bipolar</b>: alternating mania and depression</td><td>Candidate genes may overlap with other psychiatric disorders</td><td class="gap">[not in source]</td><td class="src"><span class="src-lec">Lecture: System Based Disorders I</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Qbank question # (Cardiovascular / Cutaneous / GI / Ophthalmologic)</span>; <span class="src src-lec">purple = System Based Disorders I OCR lecture, or the renal BOR OCR scan</span>. <span class="gap">[bracketed grey]</span> = source silent. Some entries (NF1, TSC, Gorlin, XP, Lynch, FAP, BWS) also appear in the cancer/neuro tables — here shown in their organ-system context.</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity:</b> type several words — every word must match in a row; closer together ranks higher.<br>
+  • <b>Fuzzy:</b> typo tolerance (e.g. <i>"ichtyosis"→ichthyosis</i>, <i>"cardiomyopaty"→cardiomyopathy</i>, <i>"imprintng"→imprinting</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by system.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length);
+  let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) {
+    const sub = word.substr(s, term.length);
+    if (!sub) break;
+    best = Math.min(best, editDistance(term, sub));
+    if (best === 0) break;
+  }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText);
+  const positions = [];
+  let total = 0;
+  for (const term of terms) {
+    let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => {
+      const s = termMatchesWord(term, w);
+      if (s > bestScore) { bestScore = s; bestPos = idx; }
+    });
+    if (bestScore === 0) return null;
+    total += bestScore;
+    positions.push(bestPos);
+  }
+  if (proxOn.checked && positions.length > 1) {
+    const spread = Math.max(...positions) - Math.min(...positions);
+    total += Math.max(0, 40 - spread * 4);
+  }
+  return total;
+}
+
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<")
+             .replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => {
+    const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) {
+      for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>";
+    }
+    return tok;
+  }).join("");
+}
+
+function filterTable() {
+  const q = input.value.trim();
+  const terms = tokenize(q);
+  let visible = 0;
+  const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else {
+      row.style.display = ""; visible++;
+      Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms));
+      scored.push({ row, sc });
+    }
+  });
+  if (terms.length && scored.length) {
+    scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row));
+  }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+
+function resetAll() {
+  input.value = "";
+  allRows.forEach(r => tbody.appendChild(r));
+  filterTable();
+  input.focus();
+}
+
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col];
+  sortDir[col] = asc;
+  rows.sort((a, b) => {
+    const x = a.cells[col].textContent.trim().toLowerCase();
+    const y = b.cells[col].textContent.trim().toLowerCase();
+    return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+const catChips = ["Dermatologic","Cardiovascular","GI/hepatic","Renal","Sensory","Epigenetic","Psychiatric"];
+const termChips = ["white forelock","collodion","sarcomere","long QT","Kayser-Fleischer","connexin 26","imprinting","ash-leaf"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip cat"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+termChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+
+tbody.addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (tr) tr.classList.toggle("hit");
+});
+
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
