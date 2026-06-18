@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Neurogenetics — Qbank + OCR Lecture Master Table</title>
+<style>
+  :root { --accent:#4338ca; --accent-dark:#322aa0; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(67,56,202,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#eef0fb; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#e8e7fb; color:var(--accent-dark); border:1px solid #c0bcf0; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.87em; }
+  th, td { border:1px solid #d4dae0; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#f4f4fc; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.78em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🧠 ABMGG / ACMG Neurogenetics — Master Study Table</h2>
+<p class="sub">Neurogenetic disorders from your <b>ACMG Genetics Qbank</b> (44 Neurogenetics questions) + the OCR'd <b>Neurogenetics Overview lecture</b>. Source column cites the exact question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "CAG repeat" · "anticipation" · "vestibular schwannoma" · "eye of the tiger" · "avoid sodium channel" · "PMP22"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Disorder<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Gene(s)<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Inheritance<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Mechanism / Mutation type<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Key Clinical Features<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(6)">Diagnosis / Testing<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(7)">Treatment / Management<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(8)">Board Pearl<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(9)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ============ REPEAT EXPANSION ============ -->
+    <tr><td>Huntington disease</td><td>Repeat expansion — neurodegenerative (polyglutamine)</td><td>HTT (4p16.3)</td><td>Autosomal dominant; <b>anticipation</b> (greater w/ paternal transmission)</td><td><b>CAG repeat in exon 1 → polyQ tract; toxic gain-of-function</b>. Normal 10-26; intermediate 27-35 (no disease, meiotic instability → offspring); reduced penetrance 36-39; full penetrance ≥40; juvenile ≥60. Onset inversely correlated w/ repeat size.</td><td>Chorea, dystonia, late rigidity, bradykinesia, dysphagia; executive dysfunction → dementia; depression/irritability/psychosis (often precede motor). Striatal (caudate/putamen) neuron loss. Juvenile/Westphal: rigid-akinetic, seizures, almost always paternal.</td><td>CAG repeat sizing; presymptomatic testing requires pre-test counseling + psych eval + post-test support; prenatal/PGD available</td><td>No cure; symptomatic — tetrabenazine (chorea), SSRIs, antipsychotics</td><td><b>40 CAG = fully penetrant</b> vs 36-39 = reduced penetrance. 8yo w/ rigidity → juvenile HD → paternal inheritance (≥60 repeats).</td><td class="src"><span class="src-q">Neuro Q6, Q18, Q42</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Myotonic Dystrophy Type 1 (DM1)</td><td>Repeat expansion — neuromuscular (RNA toxicity)</td><td>DMPK (19q13)</td><td>Autosomal dominant; <b>anticipation</b>; congenital form = <b>maternal transmission only</b></td><td><b>CTG repeat in 3'UTR → toxic CUG RNA sequesters MBNL1 → mis-splicing</b> (CLCN1→myotonia, INSR→insulin resistance). Normal 5-34; premutation 35-49; classic 150-1000; congenital &gt;1000 (maternal). DM2 = CCTG in CNBP/ZNF9.</td><td>Myotonia (grip/percussion), distal&gt;proximal weakness, facial weakness/ptosis, posterior subcapsular cataracts, cardiac conduction defects (AV block, sudden death), insulin resistance, hypersomnia. Congenital: neonatal hypotonia, respiratory failure, clubfeet, ID.</td><td>PCR + Southern blot for repeat sizing; <b>check EKG (conduction disease = sudden death risk)</b>; EMG "dive-bomber"</td><td class="gap">[not in source]</td><td><b>Only common repeat disorder w/ expansion in the 3'UTR</b>; myotonia + ptosis + cataracts + cardiac conduction; congenital form maternal-only.</td><td class="src"><span class="src-q">Neuro Q17</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Friedreich ataxia (FRDA)</td><td>Repeat expansion — ataxia (loss of function)</td><td>FXN / frataxin (9q21.11)</td><td>Autosomal recessive</td><td><b>GAA repeat in intron 1 → ↓frataxin → mitochondrial iron accumulation → oxidative damage</b>. Normal 5-33, intermediate 34-55, pathological 56-1300 (~800 typical). 4% = 1 expansion + 1 point mutation.</td><td>Classic triad: progressive ataxia (gait&gt;limb, onset ~10-15y), pes cavus + scoliosis, <b>extensor plantar (Babinski) + absent reflexes</b> (mixed UMN/LMN); ↓proprioception/vibration, dysarthria, nystagmus. Systemic: hypertrophic cardiomyopathy (&gt;90%, leading cause of death), diabetes (10-30%), optic atrophy.</td><td><b>Echocardiogram at dx + annually</b>; ECG; glucose monitoring; scoliosis & ophthalmology</td><td class="gap">[not in source]</td><td><b>Ataxia + areflexia + Babinski = pathognomonic (UMN & LMN)</b>; cardiomyopathy is leading cause of death; wheelchair within 10-15y.</td><td class="src"><span class="src-q">Neuro Q34</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Fragile X syndrome &amp; FXTAS</td><td>Repeat expansion — neurodevelopmental / neurodegenerative</td><td>FMR1 (X-linked)</td><td>X-linked; expansion to full mutation via <b>maternal transmission</b> (paternal premutation transmission is stable)</td><td><b>CGG repeat in 5'UTR.</b> Normal 5-44; intermediate 45-54; <b>premutation 55-200 → FXTAS/FXPOI via RNA toxicity</b> (unmethylated, excess mRNA); full mutation &gt;200 → promoter hypermethylation → silencing → loss of FMRP → fragile X syndrome.</td><td>Fragile X (full mutation): ID, long face, large ears, macroorchidism, autism. FXTAS (premutation males &gt;50y): cerebellar ataxia, intention tremor, cognitive decline, neuropathy, parkinsonism. FXPOI: POI &lt;40 (~20% of female premutation carriers).</td><td>FMR1 CGG repeat sizing. FXTAS MRI: <b>middle cerebellar peduncle (MCP) sign</b>. Penetrance ↑ with age.</td><td class="gap">[not in source]</td><td><b>Premutation (55-200) causes FXTAS, NOT full mutation</b> (silenced gene = no toxic RNA). Expansion to full mutation only through female line.</td><td class="src"><span class="src-q">Neuro Q9, Q14</span></td></tr>
+    <tr><td>Facioscapulohumeral Dystrophy (FSHD)</td><td>Repeat <b>contraction</b> — neuromuscular (epigenetic)</td><td>DUX4 (4q35); FSHD2: SMCHD1</td><td>Autosomal dominant (~20% de novo); FSHD2 digenic</td><td><b>Contraction of D4Z4 macrosatellite at 4q35 → chromatin relaxation → derepression of DUX4 (toxic GOF)</b>. Requires permissive 4qA haplotype. FSHD1 (~95%): normal 11-100 → contracted 1-10. FSHD2: normal length + SMCHD1 mutation + 4qA.</td><td>Descending weakness: face (can't whistle/close eyes) → shoulders (scapular winging) → lower limbs (foot drop). <b>Highly asymmetric.</b> Retinal vasculopathy, sensorineural hearing loss. CK normal-mildly ↑.</td><td>D4Z4 repeat sizing (Southern/molecular combing): FSHD1 = 1-10 repeats on 4qA; if negative → SMCHD1 sequencing (FSHD2)</td><td class="gap">[not in source]</td><td><b>Asymmetric weakness + scapular winging + facial weakness = FSHD</b>; only repeat <i>contraction</i> disorder; most remain ambulatory.</td><td class="src"><span class="src-q">Neuro Q16</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+
+    <!-- ============ NEUROMUSCULAR ============ -->
+    <tr><td>Duchenne muscular dystrophy (DMD)</td><td>Neuromuscular — muscular dystrophy</td><td>DMD (dystrophin, Xp21)</td><td>X-linked recessive (~1/3 de novo)</td><td><b>Out-of-frame DMD mutations → absent dystrophin</b> (~65% deletions, ~10% dup, ~25% point). Becker = in-frame → reduced/abnormal dystrophin (milder).</td><td>Normal at birth; proximal weakness onset 3-5y, <b>Gowers sign, calf pseudohypertrophy</b>, loss of ambulation ~12-13, cardiomyopathy + respiratory failure in teens-20s.</td><td><b>CK massively ↑ from birth (10-100× ULN)</b> before weakness; deletion/dup (MLPA) then sequencing; dystrophin immunostain if needed. Carriers ↑CK ~70%.</td><td>Steroids (deflazacort/prednisone) prolong ambulation; exon skipping, nonsense suppression, givinostat; cardiac/respiratory monitoring</td><td>Massive CK in a young boy = DMD/Becker until proven otherwise; check CK before anesthesia (MH/rhabdo risk).</td><td class="src"><span class="src-q">Neuro Q15, Q25</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Spinal muscular atrophy (SMA)</td><td>Neuromuscular — motor neuron (anterior horn)</td><td>SMN1 (causative), SMN2 (modifier); 5q</td><td>Autosomal recessive</td><td><b>~95% homozygous SMN1 exon-7 deletion</b>; SMN2 (C→T exon 7 → exon-7 skipping) makes ~10% functional protein. <b>↑SMN2 copy number → milder</b> (Type1 1-2; Type2 3; Type3 3-4).</td><td>Floppy infant: hypotonia + proximal weakness, absent DTRs, <b>tongue fasciculations</b>. Type1 (Werdnig-Hoffmann) &lt;6mo, never sit, death &lt;2y untreated; Type2 sit; Type3 (Kugelberg-Welander) walk; Type4 adult.</td><td>Tongue fasciculations in hypotonic infant; <b>CK normal</b> (anterior horn, not muscle); SMN1 deletion + SMN2 copy number; newborn screening</td><td><b>Gene replacement Zolgensma (AAV9-SMN1, &lt;2y); nusinersen (intrathecal ASO) & risdiplam (oral)</b> ↑SMN2 exon-7 inclusion; best pre-symptomatic</td><td>Only FDA gene-replacement therapy for a neurogenetic disorder; SMN2 copy number = key severity modifier.</td><td class="src"><span class="src-q">Neuro Q8, Q36, Q37, Q44</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Charcot-Marie-Tooth type 1A (CMT1A)</td><td>Neuromuscular — demyelinating neuropathy</td><td>PMP22 (17p12)</td><td>Autosomal dominant</td><td><b>1.4 Mb duplication at 17p12 (3 copies PMP22) via NAHR → myelin overexpression</b>; reciprocal of HNPP deletion.</td><td>Progressive distal LE weakness/foot drop, pes cavus, absent DTRs, distal atrophy ("inverted champagne bottle"), hammer toes; onset 1st-2nd decade; usually ambulatory.</td><td>Most common inherited neuropathy; NCS: <b>uniform demyelinating slowing &lt;38 m/s</b>; dup/del testing of 17p12; onion-bulbs</td><td class="gap">[not in source]</td><td><b>PMP22 duplication = CMT1A</b> (vs deletion = HNPP); pes cavus + absent reflexes + AD history nearly pathognomonic.</td><td class="src"><span class="src-q">Neuro Q12, Q43</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>HNPP (hereditary neuropathy w/ liability to pressure palsies)</td><td>Neuromuscular — demyelinating neuropathy</td><td>PMP22 (17p12)</td><td>Autosomal dominant</td><td><b>1.4 Mb deletion at 17p12 (1 PMP22 copy) → haploinsufficiency</b>; reciprocal NAHR product to CMT1A duplication.</td><td>Episodic, painless, recurrent focal neuropathies at compression sites (carpal tunnel, peroneal from leg crossing, ulnar from leaning); onset adolescence; good recovery after each episode.</td><td>PMP22 deletion testing; NCS: focal slowing at compression sites; <b>tomaculous ("sausage") myelin</b> on biopsy</td><td class="gap">[not in source]</td><td><b>PMP22 deletion = HNPP</b> (reciprocal of CMT1A duplication); recurrent painless mononeuropathies from minor compression.</td><td class="src"><span class="src-q">Neuro Q11</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Congenital myasthenic syndrome (CMS)</td><td>Neuromuscular — neuromuscular junction</td><td>CHRNE (AChR ε, most common), RAPSN; also DOK7, COLQ</td><td class="gap">[not in source]</td><td>Inherited defect of the neuromuscular junction (contrast autoimmune anti-AChR/MuSK MG)</td><td>Fatigable weakness (worsens with activity), ocular involvement common (ptosis, diplopia)</td><td><b>Normal CK</b> (unlike dystrophies); decremental response on repetitive nerve stimulation; genetic testing</td><td class="gap">[not in source]</td><td>CHRNE & RAPSN = most common CMS genes; CMS = inherited NMJ disorder vs autoimmune MG.</td><td class="src"><span class="src-q">Neuro Q24</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Marinesco-Sjögren syndrome (MSS)</td><td>Neuromuscular — cerebellar ataxia w/ myopathy</td><td>SIL1 (5q31; ~50%); ER chaperone exchange factor for BiP</td><td>Autosomal recessive</td><td>LOF SIL1 variants → ER chaperone dysfunction</td><td><b>Pentad: congenital/early cataracts + cerebellar ataxia + ID + growth deficiency + hypotonia/myopathy</b>; plus microcephaly, nystagmus, scoliosis, hypogonadotropic hypogonadism.</td><td>Clinical (pentad); MRI cerebellar (vermis) atrophy; muscle biopsy vacuolar myopathy with rimmed vacuoles; SIL1 sequencing</td><td class="gap">[not in source]</td><td><b>Cataracts are the key discriminator</b> — congenital cataracts + ataxia + ID = Marinesco-Sjögren (other hereditary ataxias lack cataracts).</td><td class="src"><span class="src-q">Neuro Q39</span></td></tr>
+
+    <!-- ============ NEUROCUTANEOUS / TUMOR PREDISPOSITION ============ -->
+    <tr><td>Neurofibromatosis type 1 (NF1)</td><td>Neurocutaneous / tumor predisposition</td><td>NF1 (17q11.2) — neurofibromin</td><td>Autosomal dominant, complete penetrance; segmental NF1 = mosaicism</td><td>Tumor suppressor; neurofibromin is a <b>RasGAP</b> → loss → constitutive Ras-MAPK. 1.4-1.5 Mb whole-gene deletion → severe phenotype.</td><td><b>Café-au-lait macules</b>, axillary/inguinal freckling, neurofibromas (incl. plexiform), <b>Lisch nodules</b>, optic pathway glioma, sphenoid/long-bone dysplasia; learning disabilities; MPNST risk 8-13%; vasculopathy (renovascular HTN, moyamoya).</td><td>NIH criteria (2 of 7): ≥6 CALMs, ≥2 neurofibromas/1 plexiform, freckling, optic glioma, ≥2 Lisch nodules, osseous lesion, 1st-degree relative; + genetic testing</td><td>Annual ophthalmology, BP, growth, vitamin D/DEXA, breast screen (women ≥30), monitor MPNST. <b>MEK inhibitor (selumetinib)</b> for plexiform neurofibromas</td><td>Lisch nodules pathognomonic & asymptomatic. Distinguish from Legius (SPRED1: CALMs/freckling, NO tumors).</td><td class="src"><span class="src-q">Neuro Q10, Q20, Q26, Q32</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Neurofibromatosis type 2 (NF2)</td><td>Neurocutaneous / tumor predisposition</td><td>NF2 (22q12) — merlin (schwannomin)</td><td>Autosomal dominant, complete penetrance; new mutation/mosaicism</td><td>Tumor suppressor; merlin = cytoskeletal-membrane scaffold (Hippo-YAP), not a GAP. 1:25,000.</td><td><b>Bilateral vestibular schwannomas</b> (~90% by 30) → hearing loss, tinnitus, imbalance; other schwannomas, multiple meningiomas, spinal ependymomas; <b>juvenile posterior subcapsular cataracts</b>.</td><td>Plotkin 2022 criteria + genetic testing: bilateral VS; or combinations of unilateral VS + meningioma/ependymoma</td><td>Hearing, brain & spinal imaging, eye exam; surgery (hearing-preservation), bevacizumab (can shrink VS)</td><td>Bilateral vestibular schwannomas = pathognomonic; NF2 has cataracts vs NF1 Lisch nodules; vs schwannomatosis (no VS/meningiomas).</td><td class="src"><span class="src-q">Neuro Q35, Q41</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Schwannomatosis (SMARCB1 / LZTR1)</td><td>Neurocutaneous / tumor predisposition</td><td>SMARCB1/INI1 (22q11.23), LZTR1 (22q11.21); ~1:40,000</td><td>Autosomal dominant, incomplete penetrance; mosaicism</td><td>Tumor suppressors (SMARCB1 = SWI/SNF chromatin remodeling). <b>Four-hit mechanism</b> → ALL tumors show biallelic NF2 loss (final common pathway).</td><td>Multiple <b>schwannomas</b> (spinal, peripheral, cutaneous); <b>pain dominant (~70%)</b>; NO bilateral VS (vs NF2); NO neurofibromas/CALMs (vs NF1); onset ~25-30y.</td><td>Criteria + genetic testing: age &gt;30, ≥2 non-intradermal schwannomas (≥1 confirmed), no bilateral VS, no constitutional NF2 variant. SMARCB1 tumors: mosaic INI1 staining</td><td>Surgery, pain management</td><td>Multiple painful schwannomas + NO VS + NO meningiomas = schwannomatosis. Germline SMARCB1 loss early → rhabdoid tumors.</td><td class="src"><span class="src-q">Neuro Q27, Q35, Q40</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Tuberous Sclerosis Complex (TSC)</td><td>Neurocutaneous / tumor predisposition</td><td>TSC1 (hamartin, 9q34), TSC2 (tuberin, 16p13.3); ~1:6,000</td><td>Autosomal dominant; ~2/3 de novo; variable expressivity</td><td>Tumor suppressor — <b>two-hit</b>; hamartin-tuberin inhibits mTOR (TSC2 = RhebGAP) → loss → mTOR hyperactivation. <b>TSC2-PKD1 contiguous gene deletion</b> → TSC + early-onset PKD.</td><td><b>Cortical tubers</b> (epilepsy ~85%), subependymal nodules, SEGA; hypomelanotic/ash-leaf macules, facial angiofibromas, shagreen patch, <b>Koenen (ungual) fibromas</b>; cardiac rhabdomyomas (regress); renal angiomyolipomas; LAM (adult women); infantile spasms.</td><td>2021 criteria (2 major, or 1 major + ≥2 minor); brain MRI + EEG + TAND screening; abdominal MRI; chest CT (women)</td><td><b>Everolimus</b> for SEGA/renal AML; sirolimus for LAM; <b>vigabatrin first-line for infantile spasms</b>; epilepsy surgery</td><td>Cardiac rhabdomyomas regress (echo may be normal in adult); hypopigmented (not hyper-) macules; suspect TSC2-PKD1 deletion if childhood PKD.</td><td class="src"><span class="src-q">Neuro Q2, Q3, Q19</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Von Hippel-Lindau (VHL)</td><td>Neurocutaneous / tumor predisposition</td><td>VHL (3p25.3); ~1:36,000</td><td>Autosomal dominant; ~20% new mutation</td><td>Tumor suppressor; pVHL degrades HIF → loss → HIF/VEGF ↑ → angiogenesis. Type 1 (truncating) low pheo; Type 2 (missense) high pheo (2B high RCC, 2C pheo-only).</td><td><b>Hemangioblastomas</b>: CNS/cerebellum/spinal (60-80%) & retinal (~60%, often first); clear cell <b>RCC</b> (60-70%, leading cause of death); pheochromocytoma; pancreatic cysts/NETs; <b>endolymphatic sac tumors</b> (hearing loss).</td><td>Genotype-phenotype testing; surveillance: annual ophthalmology + metanephrines; abdominal/brain/spine MRI from age 16; audiology</td><td>Nephron-sparing surgery (RCC &gt;3cm); resect symptomatic hemangioblastomas; pheo resection w/ α-blockade; <b>belzutifan (HIF-2α inhibitor)</b></td><td>"Frameshift" → Type 1 → skip intensive pheo surveillance. ELST = most common cause of SNHL in VHL. TSC has angiomyolipomas, not RCC.</td><td class="src"><span class="src-q">Neuro Q30, Q31, Q38</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Moyamoya (NF1-associated vasculopathy)</td><td>Neurocutaneous-associated cerebral vasculopathy</td><td>NF1 (in NF1-associated cases)</td><td class="gap">[not in source]</td><td>NF1 haploinsufficiency in vascular smooth muscle → intimal hyperplasia → progressive stenosis; fragile collaterals prone to hemorrhage</td><td><b>Progressive stenosis of internal carotid arteries</b> with collaterals ("puff of smoke" on angiography); 1-6% of NF1; ischemic & hemorrhagic strokes in children/young adults.</td><td>Brain MRI/MRA for symptoms; angiography = gold standard</td><td>Neurosurgical referral; revascularization (bypass); avoid dehydration (↑stroke risk)</td><td>"Moyamoya" = "puff of smoke". Optic gliomas in NF1 do not cause stroke; cardiac rhabdomyomas are TSC not NF1.</td><td class="src"><span class="src-q">Neuro Q26</span></td></tr>
+
+    <!-- ============ NEURODEGEN / MOVEMENT / DEMENTIA / EPILEPSY ============ -->
+    <tr><td>Alzheimer disease</td><td>Neurodegenerative / dementia</td><td><b>APOE</b> (ε4 risk); APP, PSEN1, PSEN2 (familial early-onset)</td><td>APOE ε4 = <b>risk allele, NOT Mendelian</b>; APP/PSEN1/PSEN2 = AD, near-100% penetrant</td><td>APOE ε4 modulates amyloid-β clearance (susceptibility polymorphism, ~15% allele freq); APP/PSEN ↑ amyloidogenic Aβ42</td><td>Progressive dementia; memory → language/visuospatial → ADL loss. <b>ε4/ε4 ≈ 12-15× risk; ε3/ε4 ≈ 3-4×; ε2 protective</b>. Early-onset familial AD &lt;65y (APP/PSEN).</td><td>APOE genotyping; CSF Aβ42, amyloid PET. <b>ACMG does NOT recommend APOE testing of asymptomatic individuals</b></td><td>Cholinesterase inhibitors (donepezil) = modest symptomatic benefit, do NOT alter progression</td><td><b>APOE ε4 = strongest genetic risk for late-onset AD; risk allele, not pathogenic variant.</b> APP/PSEN cause &lt;2% (early-onset).</td><td class="src"><span class="src-q">Neuro Q1, Q28</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Parkinson disease</td><td>Movement disorder / neurodegenerative</td><td><b>SNCA</b> (α-synuclein); <b>GBA1</b> (risk); LRRK2, PRKN, PINK1, DJ-1</td><td>SNCA = AD; GBA1 = <b>risk allele</b>; PRKN/PINK1/DJ-1 = AR; LRRK2 = AD; most sporadic</td><td>SNCA aggregation → <b>Lewy bodies</b> in substantia nigra; point mutations or copy gain (triplication→early severe, gene-dosage); GBA1 = ↓glucocerebrosidase → lysosomal dysfunction → α-synuclein aggregation</td><td>Cardinal: <b>resting tremor (pill-rolling), cogwheel rigidity, bradykinesia (required), late postural instability</b>; asymmetric onset. Prodrome: REM behavior disorder, anosmia, constipation.</td><td>Largely clinical; test when early onset &lt;50y or family history; GBA1-PD often found via Gaucher cascade</td><td>Levodopa/carbidopa most effective (wearing-off/dyskinesias after 5-10y); dopaminergics → impulse-control disorders</td><td><b>GBA1 = most common genetic risk for PD (~5-10×); LRRK2 G2019S = most common monogenic cause</b> (Ashkenazi/N. African). GBA-PD = earlier, more dementia.</td><td class="src"><span class="src-q">Neuro Q13, Q29</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>DYT1 dystonia (early-onset torsion / Oppenheim)</td><td>Movement disorder</td><td><b>TOR1A</b> (torsinA), 9q34</td><td>Autosomal dominant, <b>reduced penetrance (~30%)</b></td><td><b>3-bp in-frame GAG deletion in exon 5</b> removing one glutamic acid from torsinA (NOT a trinucleotide repeat); ~90% of DYT1</td><td>Onset childhood/adolescence (mean 12-13y); starts in a limb (leg&gt;arm) → tends to generalize; <b>no cognitive impairment, normal lifespan</b></td><td>Genetic testing for the GAG deletion; predictive testing complicated by reduced penetrance</td><td><b>DBS of globus pallidus very effective</b> for refractory cases</td><td><b>Ashkenazi founder mutation (~1/3,000)</b>; ~70% of carriers unaffected; GAG deletion vs trinucleotide repeats (HD, SCA).</td><td class="src"><span class="src-q">Neuro Q4, Q21</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>PKAN (pantothenate kinase-associated neurodegeneration)</td><td>Neurodegenerative (NBIA — brain iron)</td><td><b>PANK2</b>, 20p13</td><td>Autosomal recessive</td><td>Loss of PANK2 (first step of CoA biosynthesis) → cysteine accumulation → <b>iron deposition in globus pallidus</b> → oxidative neuronal death</td><td>Classic: onset &lt;6y, rapid; dystonia/rigidity/spasticity/choreoathetosis, pigmentary retinopathy, wheelchair in adolescence; atypical: later, more speech/psychiatric.</td><td><b>"Eye of the tiger" sign on T2 MRI</b> — central hyperintensity in medial globus pallidus with hypointense rim; PANK2 testing</td><td class="gap">[not in source]</td><td><b>Eye-of-the-tiger MRI = virtually pathognomonic for PKAN</b>; part of NBIA; iron (not copper=Wilson/Menkes).</td><td class="src"><span class="src-q">Neuro Q5</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>CADASIL</td><td>Cerebral small-vessel (vascular dementia)</td><td><b>NOTCH3</b>, 19p13</td><td>Autosomal dominant, variable penetrance</td><td>Almost all variants are <b>cysteine-altering missense in EGF-like repeats</b> → NOTCH3 ECD accumulation & <b>granular osmiophilic material (GOM)</b> in vascular smooth muscle</td><td>Tetrad: <b>migraine with aura (first, 20s-30s), recurrent subcortical (true lacunar) strokes (40s-50s), mood disturbance, progressive vascular dementia</b>.</td><td>MRI: confluent WM hyperintensities with <b>anterior temporal pole + external capsule</b> involvement; skin biopsy EM shows GOM; NOTCH3 sequencing = gold standard</td><td>No disease-modifying therapy; control vascular risk, avoid smoking</td><td><b>Most common inherited cause of stroke/vascular dementia</b>; true infarcts (vs MELAS stroke-like episodes); not berry aneurysm (ADPKD).</td><td class="src"><span class="src-q">Neuro Q7, Q22</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+    <tr><td>Dravet syndrome (severe myoclonic epilepsy of infancy)</td><td>Epilepsy / channelopathy</td><td><b>SCN1A</b> (Na-channel α)</td><td>Autosomal dominant, usually <b>de novo</b></td><td><b>~80% have SCN1A pathogenic variants, usually de novo loss-of-function</b></td><td>Onset first year (5-8mo) with <b>prolonged febrile seizures (often hemiclonic)</b> → multiple seizure types; developmental plateau/regression in 2nd year; treatment-resistant, cognitive impairment, ataxia.</td><td>SCN1A genetic testing</td><td><b>AVOID sodium-channel blockers (lamotrigine, carbamazepine, phenytoin) — worsen seizures</b>; valproate, clobazam, stiripentol, cannabidiol; ketogenic diet</td><td><b>Intractable epilepsy starting as febrile seizures + regression = test SCN1A; avoid Na-channel blockers.</b></td><td class="src"><span class="src-q">Neuro Q33</span></td></tr>
+    <tr><td>Familial dysautonomia (Riley-Day; HSAN III)</td><td>Hereditary sensory & autonomic neuropathy</td><td><b>ELP1</b> (formerly IKBKAP)</td><td>Autosomal recessive</td><td>Ashkenazi founder splice mutation <b>c.2204+6T&gt;C, &gt;99% of disease alleles</b></td><td>Infancy: <b>absent/decreased tearing (alacrima), feeding difficulty, vomiting crises, absent fungiform papillae (smooth tongue), temperature instability</b>; later ↓pain/temperature (intact vibration), postural hypotension, scoliosis, absent corneal reflex/DTRs.</td><td>Clinical + genetic testing; included in Ashkenazi carrier screening</td><td class="gap">[not in source]</td><td><b>Infant with absent tears + vomiting + absent fungiform papillae = familial dysautonomia.</b> Ashkenazi carrier ~1/30.</td><td class="src"><span class="src-q">Neuro Q23</span> <span class="src-lec">+ Lecture: Neurogenetics Overview</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Genetics Qbank "Neurogenetics" question #</span>; <span class="src src-lec">purple = OCR'd Neurogenetics Overview lecture</span>. <span class="gap">[bracketed grey]</span> = source silent. Built from 44 Neurogenetics Qbank questions + the OCR lecture (no separate neuro OCR scan exists).</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity:</b> type several words — every word must match in a row; closer together ranks higher.<br>
+  • <b>Fuzzy:</b> typo tolerance (e.g. <i>"huntingtin"→huntington</i>, <i>"schwannomatos"→schwannomatosis</i>, <i>"ataxa"→ataxia</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by category.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length);
+  let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) {
+    const sub = word.substr(s, term.length);
+    if (!sub) break;
+    best = Math.min(best, editDistance(term, sub));
+    if (best === 0) break;
+  }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText);
+  const positions = [];
+  let total = 0;
+  for (const term of terms) {
+    let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => {
+      const s = termMatchesWord(term, w);
+      if (s > bestScore) { bestScore = s; bestPos = idx; }
+    });
+    if (bestScore === 0) return null;
+    total += bestScore;
+    positions.push(bestPos);
+  }
+  if (proxOn.checked && positions.length > 1) {
+    const spread = Math.max(...positions) - Math.min(...positions);
+    total += Math.max(0, 40 - spread * 4);
+  }
+  return total;
+}
+
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<")
+             .replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => {
+    const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) {
+      for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>";
+    }
+    return tok;
+  }).join("");
+}
+
+function filterTable() {
+  const q = input.value.trim();
+  const terms = tokenize(q);
+  let visible = 0;
+  const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else {
+      row.style.display = ""; visible++;
+      Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms));
+      scored.push({ row, sc });
+    }
+  });
+  if (terms.length && scored.length) {
+    scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row));
+  }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+
+function resetAll() {
+  input.value = "";
+  allRows.forEach(r => tbody.appendChild(r));
+  filterTable();
+  input.focus();
+}
+
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col];
+  sortDir[col] = asc;
+  rows.sort((a, b) => {
+    const x = a.cells[col].textContent.trim().toLowerCase();
+    const y = b.cells[col].textContent.trim().toLowerCase();
+    return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+const catChips = ["Repeat expansion","Neuromuscular","Neurocutaneous","Neurodegenerative","Movement disorder","Epilepsy"];
+const termChips = ["CAG repeat","anticipation","vestibular schwannoma","eye of the tiger","avoid sodium channel","PMP22","cafe-au-lait","APOE"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip cat"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+termChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+
+tbody.addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (tr) tr.classList.toggle("hit");
+});
+
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
