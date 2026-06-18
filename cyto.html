@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Cytogenetics — Qbank + OCR Lecture Master Table</title>
+<style>
+  :root { --accent:#c2410c; --accent-dark:#9a3412; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(194,65,12,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#fdf0e8; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#fdeede; color:var(--accent-dark); border:1px solid #f3c79f; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.87em; }
+  th, td { border:1px solid #d4dae0; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#fdf5ef; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.78em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🧫 ABMGG / ACMG Cytogenetics — Master Study Table</h2>
+<p class="sub">Cytogenetic concepts & syndromes from your <b>ACMG Genetics Qbank</b> (50 Cytogenetics questions) + the OCR'd <b>Clinical Cytogenetics &amp; Genomics</b> / <b>cytogenetics</b> lectures. Source column cites question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "NAHR" · "alternate segregation" · "Barr bodies" · "Philadelphia" · "cat cry" · "Robertsonian"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Topic / Syndrome<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Lesion / Locus / Mechanism<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Key Features / Facts<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Diagnosis / Method<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Board Pearl<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(6)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ============ TECHNIQUES ============ -->
+    <tr><td>G-banded karyotype</td><td>Technique</td><td>Giemsa stain after trypsin; <b>G-negative (light) = GC-rich, gene-rich, early-replicating</b>; G-positive (dark) = AT-rich, gene-poor, late-replicating</td><td>Smallest detectable imbalance ~3-5 Mb; resolutions 400/550/850 bands. Prep: PHA → Colcemid → hypotonic → fixative (3:1 methanol:acetic) → trypsin → Giemsa. <b>Detects balanced rearrangements and polyploidy</b></td><td>Conventional karyotype</td><td>"Please Come Here For The Genes" (PHA→Colcemid→Hypotonic→Fixative→Trypsin→Giemsa); light = gene-rich/early-replicating</td><td class="src"><span class="src-q">Cyto Q12, Q40</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Chromosomal microarray (CMA / aCGH)</td><td>Technique</td><td>Genome-wide copy-number via hybridization; <b>resolution ~5-10 kb (≫ karyotype)</b></td><td><b>First-tier test for DD/ID/autism/MCA</b> (yield ~15-18% vs ~3% karyotype); no cell culture needed. <b>Limitations: cannot detect balanced rearrangements; traditional aCGH cannot detect polyploidy; no point mutations; cannot show mechanism</b></td><td>Array CGH / microarray</td><td>CMA = first-tier (ACMG 2010); <b>misses balanced rearrangements & polyploidy; can't determine mechanism</b> of an imbalance</td><td class="src"><span class="src-q">Cyto Q13, Q32, Q34</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>SNP array & UPD detection</td><td>Technique</td><td>CMA with SNP probes → genotype + copy number; <b>detects runs of homozygosity (ROH) → uniparental disomy</b></td><td>Unique to SNP arrays: UPD (isodisomy), consanguinity, LOH, and polyploidy via allele ratios. Other features depend on probe density, not type. Neither array detects balanced rearrangements</td><td>SNP-based microarray</td><td><b>SNP probes' unique advantage = UPD/ROH and consanguinity</b>; copy-number-only arrays cannot genotype alleles</td><td class="src"><span class="src-q">Cyto Q13, Q25</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>FISH (fluorescence in situ hybridization)</td><td>Technique</td><td>Fluorescent probe to chromosomes/nuclei; <b>localizes signal → determines MECHANISM of an imbalance</b></td><td>Probe types: centromeric, locus-specific, whole-chromosome paint. Metaphase (structure) or interphase (no culture). Distinguishes deletion vs duplication vs translocation. Limits: targeted; cannot detect &lt;1-2% mosaicism, point mutations, or &lt;100 kb gain/loss</td><td>Metaphase / interphase FISH</td><td><b>FISH is the microarray-confirmation method that reveals mechanism</b> (PCR/MLPA confirm a CNV but not its chromosomal mechanism)</td><td class="src"><span class="src-q">Cyto Q32</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Cell culture / metaphase preparation</td><td>Technique</td><td><b>Colcemid/colchicine inhibits spindle formation (binds tubulin) → metaphase arrest</b></td><td>PHA stimulates T-lymphocytes; Colcemid 48-72 h later arrests metaphase (max mitotic index). Metaphase = maximally condensed/countable chromosomes. Tissues: blood, marrow, skin, amniotic fluid, POC</td><td>Mitogen + colcemid metaphase harvest</td><td><b>Colcemid arrests metaphase via tubulin/spindle inhibition</b> — not centromere/nuclear membrane disruption</td><td class="src"><span class="src-q">Cyto Q12, Q36</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Cell cycle phases</td><td>Concept</td><td>Interphase (G1→S→G2) + M-phase (mitosis + cytokinesis); mitosis = prophase→metaphase→anaphase→telophase</td><td>~24 h cycle: <b>interphase ~23 h is longest</b> (G1 ~11, S ~8, G2 ~4); mitosis ~1 h. S must follow G1 and precede G2; metaphase precedes anaphase</td><td class="gap">[not in source]</td><td>Mitosis mnemonic <b>PMAT</b>; cells spend most time in interphase, mitosis is brief</td><td class="src"><span class="src-q">Cyto Q37, Q46</span></td></tr>
+
+    <!-- ============ CANCER CYTOGENETICS ============ -->
+    <tr><td>Constitutional vs acquired cytogenetics</td><td>Cancer cytogenetics</td><td>Constitutional = present in all cells (germline); acquired = somatic clonal abnormalities in malignant cells</td><td>Cancers evolve by stepwise acquired changes (numerical: hyperdiploid &gt;50, hypodiploid &lt;44; structural: translocations, del, inv, iso, rings). <b>t(11;22)(q23;q11.2) = most common recurrent CONSTITUTIONAL reciprocal translocation</b></td><td>Karyotype/FISH on tumor vs blood</td><td><b>t(11;22)(q23;q11.2) = classic recurrent constitutional translocation</b>; recurrent leukemia translocations are acquired/somatic</td><td class="src"><span class="src-q">Cyto Q31</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>CML / Philadelphia chromosome</td><td>Cancer cytogenetics</td><td><b>t(9;22)(q34;q11.2) → Philadelphia chromosome → BCR::ABL1 fusion</b> → constitutive tyrosine kinase</td><td>Diagnostic of CML (also subset of B-ALL). Chronic phase → accelerated → blast crisis. <b>TKI (imatinib) → &gt;90% 5-yr survival</b></td><td>Karyotype/FISH/PCR for BCR-ABL1</td><td><b>Philadelphia t(9;22) = BCR-ABL1 = CML</b>; targeted by imatinib — cytogenetics guiding therapy</td><td class="src"><span class="src-q">Cyto Q8</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Acute promyelocytic leukemia t(15;17)</td><td>Cancer cytogenetics</td><td><b>t(15;17)(q24;q21) → PML::RARA fusion</b> → APL (AML-M3)</td><td>Acquired translocation diagnostic of APL; <b>treated with ATRA (all-trans retinoic acid)</b>. Contrast t(8;21) AML-M2, inv(16) AML</td><td>Karyotype/FISH for PML-RARA</td><td><b>t(15;17) = PML-RARA = APL, treated with ATRA</b></td><td class="src"><span class="src-q">Cyto Q8, Q31</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+
+    <!-- ============ CNV MECHANISMS & STRUCTURAL ============ -->
+    <tr><td>NAHR & low-copy repeats (LCRs)</td><td>CNV mechanism</td><td>Non-allelic homologous recombination between flanking segmental duplications (LCRs &gt;10 kb, &gt;97% identity); produces a deletion or its reciprocal duplication</td><td><b>Cause of RECURRENT microdeletions/duplications</b> with same breakpoints. NAHR syndromes: 22q11.2 (most common, ~1/4,000), Williams 7q11.23, Smith-Magenis 17p11.2, Potocki-Lupski (dup), PWS/AS 15q11-13, Sotos 5q35. Non-NAHR random: 1p36, Miller-Dieker, Wolf-Hirschhorn, cri-du-chat</td><td>CMA or FISH detects the recurrent CNV</td><td><b>Recurrent = NAHR via flanking LCRs; 22q11.2 = most common recurrent microdeletion (~1/4,000)</b></td><td class="src"><span class="src-q">Cyto Q3, Q5, Q7, Q24</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>FoSTeS / replication-based CNV</td><td>CNV mechanism</td><td>Fork Stalling and Template Switching (FoSTeS/MMBIR) — a DNA <b>replication-based</b> mechanism, multiple template switches</td><td><b>Cause of NON-RECURRENT, COMPLEX CNVs (deletion adjacent to duplication).</b> Compare: NHEJ (repair) = simple non-recurrent; NAHR = recurrent; AHR = normal meiosis, no CNV. Three major CNV mechanisms: NAHR, NHEJ, FoSTeS</td><td>CMA showing complex/discontiguous gains+losses</td><td><b>Complex del+dup (non-recurrent) = FoSTeS/MMBIR; simple non-recurrent = NHEJ; recurrent = NAHR</b></td><td class="src"><span class="src-q">Cyto Q7, Q48</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Meiotic recombination & chromosome/chromatid counts</td><td>Meiosis</td><td>Homologs pair (bivalent) and cross over at chiasmata; one sister chromatid per crossover. AHR = normal recombination, no CNV</td><td><b>≥1 chiasma per chromosome required for segregation</b> (else nondisjunction). <b>Recombination suppressed near centromeres, highest near telomeres</b>; female &gt; male overall. Counts: <b>after meiosis I = 23 chromosomes & 46 chromatids</b>; after MII = 23/23</td><td>Concept (gametogenesis)</td><td><b>One chiasma/chromosome minimum; recombination peaks near telomeres; after MI = 23 chr / 46 chromatids</b></td><td class="src"><span class="src-q">Cyto Q19, Q21, Q42</span> <span class="src-lec">+ Lecture: cytogenetics</span></td></tr>
+    <tr><td>Inversions (paracentric vs pericentric)</td><td>Structural (single chromosome)</td><td>Two breaks, intervening segment flipped (balanced in carrier). <b>Pericentric spans the centromere; paracentric does not</b></td><td><b>Pericentric inversion → recombinant with terminal duplication of one arm + terminal deletion of the other arm (same chromosome)</b> → viable unbalanced offspring. <b>Paracentric → acentric/dicentric recombinants, usually nonviable.</b> Risk: pericentric &gt; paracentric</td><td>CMA: terminal del + terminal dup on the SAME chromosome</td><td><b>Partial del + dup of the SAME chromosome = parental pericentric inversion; paracentric makes nonviable products</b></td><td class="src"><span class="src-q">Cyto Q22</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Reciprocal translocation — meiotic segregation</td><td>Translocation (≥2 chromosomes)</td><td>Exchange of terminal segments between 2 chromosomes; forms a quadrivalent → alternate / adjacent-1 / adjacent-2</td><td><b>Alternate = balanced</b> (~50% normal + ~50% balanced carrier, both normal phenotype). <b>Adjacent-1/-2 = unbalanced.</b> Theoretical 25% each (50% unbalanced); <b>empirical unbalanced-offspring risk ~10-15%</b>. t(11;22) maternal ~6% risk of der(22) liveborn</td><td>Balanced → normal CMA; karyotype/FISH identifies carrier</td><td><b>Alternate = balanced; adjacent = unbalanced. Empirical risk ~10-15%</b></td><td class="src"><span class="src-q">Cyto Q26, Q33, Q39, Q47</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Robertsonian translocation</td><td>Translocation (acrocentrics)</td><td>Fusion of two acrocentrics (13,14,15,21,22) with loss of short arms; forms a trivalent. <b>rob(13;14) most common (~1/1,000)</b></td><td>Adjacent segregation of rob(14;21) → translocation trisomy 21 (only viable unbalanced product). Recurrence: <b>~10-15% female carriers vs ~0-2% male</b>; <b>rob(21;21) = 100% trisomy 21</b>; rob(13;14) ~1% T13</td><td>Parental karyotype when child has translocation Down (~4% of DS)</td><td><b>rob(14;21) recurrence ~10-15% maternal / 0-2% paternal; rob(21;21) = 100%</b></td><td class="src"><span class="src-q">Cyto Q29, Q35, Q43</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Derivative chromosomes / unbalanced rearrangements</td><td>Karyotype interpretation</td><td>der() = structurally rearranged chromosome; only ONE derivative of a translocation present = unbalanced. Isochromosome = loss of one arm + dup of the other</td><td>e.g. <b>der(3)t(3;7) = monosomic for 3p-ter + trisomic for 7q-ter</b>. CMA signature: <b>terminal deletion (one chromosome) + terminal duplication (a DIFFERENT chromosome) = unbalanced reciprocal translocation</b></td><td>CMA terminal loss + terminal gain on different chromosomes; karyotype confirms der()</td><td><b>Single der() = unbalanced; terminal del + dup on different chromosomes = unbalanced translocation</b></td><td class="src"><span class="src-q">Cyto Q10, Q17, Q39</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Balanced insertion</td><td>Structural rearrangement</td><td>Three-break rearrangement moving a segment to a new location; balanced in carrier</td><td><b>Only balanced rearrangement that produces an INTERSTITIAL deletion or duplication in offspring</b> (vs terminal for translocation/inversion, acrocentric trisomy for Robertsonian)</td><td>Carrier: normal CMA; offspring unbalanced: <b>interstitial</b> del/dup on CMA</td><td><b>Interstitial del/dup in a child → suspect a parental balanced insertion</b></td><td class="src"><span class="src-q">Cyto Q1, Q10</span></td></tr>
+
+    <!-- ============ ANEUPLOIDY / SEX CHROMOSOME / POLYPLOIDY ============ -->
+    <tr><td>Trisomy 21 (Down syndrome)</td><td>Autosomal aneuploidy</td><td>47,+21; <b>~95% free trisomy (maternal nondisjunction), ~4% Robertsonian translocation, ~1% mosaic</b></td><td>Most common viable autosomal trisomy & genetic cause of ID (~1:800); hypotonia, upslanting palpebral fissures, epicanthal folds, single palmar crease, excess nuchal skin, CHD 40% (AVSD); <b>~80% of T21 conceptions spontaneously abort</b></td><td>Karyotype (microarray adds nothing once +21 seen); parental karyotype if translocation</td><td><b>rob(21;21) = 100% recurrence; female rob(14;21) ~10-15% vs male ~0-2%</b></td><td class="src"><span class="src-q">Cyto Q29, Q30, Q35, Q43</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Trisomy 13 (Patau syndrome)</td><td>Autosomal aneuploidy</td><td>47,+13; nondisjunction</td><td>~1:10,000; <b>holoprosencephaly, microphthalmia, cleft lip/palate, scalp defects (cutis aplasia), postaxial polydactyly</b>, omphalocele, CHD, severe ID; most die in first month</td><td>Karyotype (already characterized — microarray adds no value)</td><td><b>Coloboma + cleft lip/palate + postaxial polydactyly + holoprosencephaly = Patau</b>; distinguish from T18 (clenched fists, rocker-bottom feet, no polydactyly)</td><td class="src"><span class="src-q">Cyto Q23, Q34</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Trisomy 16</td><td>Autosomal aneuploidy</td><td>47,+16; <b>100% maternal meiosis I nondisjunction</b></td><td><b>Most common autosomal trisomy in spontaneous abortions (~15%)</b>; full trisomy always lethal (never liveborn); mosaic T16 survives with IUGR, cardiac defects, DD</td><td>POC karyotype; if on CVS, exclude confined placental mosaicism with amnio</td><td><b>Trisomy 16 is ALWAYS maternal; trisomic rescue → maternal UPD16</b></td><td class="src"><span class="src-q">Cyto Q41</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Triploidy</td><td>Polyploidy</td><td>69 chromosomes (3n); <b>most common = dispermy (one egg, two sperm)</b>; <b>diandric = 2 paternal; digynic = 2 maternal</b></td><td>1-2% of conceptions, near-uniformly lethal; <b>diandric → large cystic placenta / partial hydatidiform mole</b>; <b>digynic → small fibrotic placenta, severe asymmetric IUGR, macrocephaly</b>; syndactyly 3rd-4th fingers</td><td>POC karyotype; placental pathology distinguishes diandric vs digynic</td><td><b>Partial mole = diandric triploidy</b> → follow hCG (persistent GTD risk); sporadic, no ↑recurrence</td><td class="src"><span class="src-q">Cyto Q11, Q49</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Turner syndrome / Monosomy X</td><td>Sex chromosome aneuploidy</td><td>45,X; <b>~70% paternal nondisjunction (only common aneuploidy where the paternal chromosome is lost)</b></td><td><b>Only monosomy compatible with life</b>; ~99% of 45,X conceptions abort; short stature (SHOX), congenital lymphedema, webbed neck, broad chest, ovarian dysgenesis (streak gonads, primary amenorrhea), coarctation/bicuspid AV, horseshoe kidney</td><td>Karyotype; HRT for puberty</td><td><b>45,X is the only common aneuploidy predominantly paternal (70%)</b>; aortic dissection = leading cause of premature death</td><td class="src"><span class="src-q">Cyto Q4</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Ring X chromosome</td><td>Sex chromosome (structural)</td><td>46,X,r(X), often mosaic 45,X/46,X,r(X); <b>ring X frequently lacks XIST (Xq13)</b></td><td>More severe than typical Turner — severe ID, malformations. <b>Small ring with XIST → Turner-like; large ring without XIST → severe phenotype</b></td><td>Karyotype 45,X/46,X,r(X); assess XIST status of the ring</td><td><b>Ring X without XIST → X-inactivation fails → functional disomy → severe ID/dysmorphism (worse than Turner)</b></td><td class="src"><span class="src-q">Cyto Q14</span></td></tr>
+    <tr><td>X-inactivation / Barr bodies</td><td>Sex chromosome (dosage compensation)</td><td>Lyon hypothesis: one X condenses to a Barr body; random/clonal; mediated by <b>XIST at the X-inactivation center (Xq13)</b></td><td>Dosage compensation XX vs XY; inactivation incomplete (escape genes). <b>Number of Barr bodies = (number of X) − 1</b> (48,XXXX → 3; 47,XXX → 2; 46,XX → 1; 45,X → 0)</td><td>Interphase Barr body count reflects X number</td><td><b>Barr bodies = #X − 1; failed inactivation (ring X lacking XIST) → functional disomy → severe phenotype</b></td><td class="src"><span class="src-q">Cyto Q14, Q15</span> <span class="src-lec">+ Lecture: cytogenetics</span></td></tr>
+
+    <!-- ============ MICRODELETION / CONTIGUOUS-GENE SYNDROMES ============ -->
+    <tr><td>22q11.2 deletion / DiGeorge / VCF</td><td>Microdeletion (recurrent, NAHR)</td><td><b>22q11.2</b> interstitial deletion; TBX1; most common recurrent microdeletion (~1/4,000); NAHR via flanking LCRs; ~90% de novo</td><td><b>CATCH-22:</b> Cardiac (conotruncal — TOF, interrupted aortic arch type B, truncus) + Abnormal facies + Thymic hypoplasia (T-cell lymphopenia) + Cleft palate/VPI + Hypocalcemia (hypoparathyroidism); ~25-30% schizophrenia</td><td>FISH or CMA; test parents (10% inherited)</td><td>Cardiac defect + cleft palate + hypoplastic thymus + hypocalcemia = 22q11.2 del; highest single genetic risk for psychosis</td><td class="src"><span class="src-q">Cyto Q3, Q20</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Cri-du-chat (5p deletion)</td><td>Microdeletion (terminal, non-recurrent)</td><td><b>5p</b> terminal deletion (5p15→pter); not LCR-mediated; ~1/50,000; size correlates with severity</td><td><b>High-pitched cat-like cry</b> in infancy (laryngeal) + microcephaly + hypotonia + severe ID + round face + hypertelorism</td><td>Karyotype (terminal 5p deletion); karyotype parents (~12% have balanced translocation)</td><td>Cat-like cry + microcephaly + hypotonia = 5p−; check parents for balanced translocation</td><td class="src"><span class="src-q">Cyto Q18, Q38</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Wolf-Hirschhorn (4p16.3 deletion)</td><td>Microdeletion (terminal, non-recurrent)</td><td><b>4p16.3</b> terminal deletion (4p−); non-recurrent random breakpoints</td><td>"Greek warrior helmet" facies, growth/ID, seizures (classic teaching; details limited in source)</td><td>Karyotype / CMA terminal 4p deletion</td><td>4p− = Wolf-Hirschhorn (distinguish from 5p− cri-du-chat); non-NAHR random terminal deletion</td><td class="src"><span class="src-q">Cyto Q24, Q38</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Miller-Dieker / isolated lissencephaly</td><td>Contiguous gene (17p13.3, non-recurrent)</td><td><b>17p13.3</b> contiguous deletion incl. <b>LIS1 (PAFAH1B1)</b> + YWHAE; non-recurrent. Isolated lissencephaly = LIS1 point mutation alone</td><td><b>Lissencephaly (smooth brain) + facial dysmorphia</b> (Miller-Dieker); LIS1 point mutation → isolated lissencephaly (brain only, NO dysmorphic facies)</td><td>MRI lissencephaly; deletion size → genotype-phenotype</td><td><b>Lissencephaly WITHOUT dysmorphic facies = LIS1 point mutation (isolated); larger deletion = Miller-Dieker</b></td><td class="src"><span class="src-q">Cyto Q9, Q18, Q24</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Williams syndrome</td><td>Microdeletion (recurrent, NAHR)</td><td><b>7q11.23</b> deletion (~1.5 Mb, incl. ELN); NAHR via flanking LCRs (~1/10,000)</td><td>Elfin facies, supravalvular aortic stenosis (ELN), hypercalcemia, "cocktail party" personality, ID (classic teaching; details limited in source)</td><td>FISH/CMA 7q11.23 deletion</td><td>7q11.23 deletion = Williams; reciprocal 7q11.23 duplication → autism/speech delay</td><td class="src"><span class="src-q">Cyto Q27</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Prader-Willi & Angelman (15q11-q13)</td><td>Imprinting / microdeletion (NAHR)</td><td><b>15q11.2-q13.1</b> deletion (NAHR); imprinted region. PWS: paternal deletion (~70%) or maternal UPD (~25%). AS: maternal deletion (~70%) or paternal UPD; maternally expressed UBE3A</td><td><b>PWS:</b> neonatal hypotonia/poor feeding → hyperphagia/obesity, hypogonadism, ID, GH deficiency. <b>Angelman:</b> severe ID, absent speech, seizures, ataxia, happy demeanor/laughing, hand-flapping</td><td><b>DNA methylation analysis is first-line</b> (detects deletion/UPD/imprinting defect); AS with normal methylation → sequence UBE3A</td><td>Paternal 15q deletion → PWS; maternal → Angelman; methylation detects all subtypes</td><td class="src"><span class="src-q">Cyto Q16, Q27, Q28, Q45</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>Smith-Magenis (del) & Potocki-Lupski (dup)</td><td>Microdeletion / microduplication (reciprocal, NAHR)</td><td><b>17p11.2</b> (~3.7 Mb, RAI1); NAHR. SMS = deletion; Potocki-Lupski (PLS) = reciprocal duplication (milder)</td><td><b>SMS:</b> self-hugging, polyembolokoilamania, self-injury, <b>inverted melatonin/circadian rhythm (sleep disturbance)</b>, brachycephaly, midface hypoplasia. <b>PLS:</b> infantile FTT, hypotonia, sleep apnea, ASD features</td><td>CMA detects del/dup; SMS Rx: evening melatonin + morning beta-blocker</td><td>17p11.2 deletion → Smith-Magenis (inverted circadian rhythm); 17p11.2 duplication → Potocki-Lupski; NF1 is 17<b>q</b>11.2</td><td class="src"><span class="src-q">Cyto Q24, Q45</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>1p36 deletion syndrome</td><td>Microdeletion (subtelomeric, non-recurrent)</td><td><b>1p36</b> subtelomeric deletion; NOT LCR-mediated, non-recurrent variable breakpoints</td><td>Most common terminal deletion syndrome; ID, seizures, hypotonia, characteristic facies (classic teaching; details limited in source)</td><td>CMA / subtelomeric FISH</td><td>1p36 deletion is subtelomeric and non-recurrent (contrast NAHR/LCR recurrent microdeletions)</td><td class="src"><span class="src-q">Cyto Q24</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>WAGR syndrome</td><td>Contiguous gene (11p13 deletion)</td><td><b>11p13 deletion</b> incl. WT1 + PAX6; random deletion (not LCR-mediated)</td><td><b>W</b>ilms tumor, <b>A</b>niridia, <b>G</b>U abnormalities, intellectual disability / developmental Range</td><td>CMA/FISH 11p13; renal surveillance for Wilms</td><td>11p− = WAGR (Wilms + aniridia + GU + ID); sporadic aniridia → CMA/FISH at 11p13 to exclude WAGR</td><td class="src"><span class="src-q">Cyto Q38</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+    <tr><td>13q deletion / retinoblastoma contiguous gene</td><td>Contiguous gene (13q deletion)</td><td><b>13q14</b> contiguous deletion incl. RB1 + adjacent genes (larger than isolated RB1 mutation)</td><td><b>Retinoblastoma + dysmorphic features + developmental delay</b> (vs isolated retinoblastoma from an RB1 point mutation)</td><td>CMA when retinoblastoma has extra features</td><td><b>Isolated retinoblastoma = RB1 point mutation; retinoblastoma + dysmorphism + DD = 13q14 contiguous deletion</b></td><td class="src"><span class="src-q">Cyto Q44</span></td></tr>
+    <tr><td>Sotos syndrome</td><td>Microdeletion (recurrent, NAHR) / NSD1</td><td><b>5q35</b> deletion (~2.0 Mb, NSD1); AD; NAHR-mediated (5q35 microdeletions predominant in Japanese; point mutations elsewhere)</td><td><b>Overgrowth + advanced bone age + characteristic facies</b> (macrocephaly, frontal bossing, pointed chin) + neonatal hypotonia + learning difficulties</td><td>NSD1 sequencing/deletion analysis</td><td>Overgrowth + advanced bone age + facies = Sotos; NOT tumor-associated (unlike BWS); distinguish from Weaver (EZH2)</td><td class="src"><span class="src-q">Cyto Q5</span> <span class="src-lec">+ Lecture: Clinical Cytogenetics & Genomics</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Qbank "Cytogenetics" question #</span>; <span class="src src-lec">purple = OCR'd Clinical Cytogenetics &amp; Genomics / cytogenetics lectures</span>. <span class="gap">[bracketed grey]</span> = source silent (a few syndromes had only locus/mechanism in-source — clinical features noted as classic teaching where the source named but didn't detail them). Built from 50 Cytogenetics Qbank questions + the lectures.</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity:</b> type several words — every word must match in a row; closer together ranks higher.<br>
+  • <b>Fuzzy:</b> typo tolerance (e.g. <i>"robertsonan"→Robertsonian</i>, <i>"aneuploidy"</i>, <i>"microdeleton"→microdeletion</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by category.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length);
+  let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) {
+    const sub = word.substr(s, term.length);
+    if (!sub) break;
+    best = Math.min(best, editDistance(term, sub));
+    if (best === 0) break;
+  }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText);
+  const positions = [];
+  let total = 0;
+  for (const term of terms) {
+    let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => {
+      const s = termMatchesWord(term, w);
+      if (s > bestScore) { bestScore = s; bestPos = idx; }
+    });
+    if (bestScore === 0) return null;
+    total += bestScore;
+    positions.push(bestPos);
+  }
+  if (proxOn.checked && positions.length > 1) {
+    const spread = Math.max(...positions) - Math.min(...positions);
+    total += Math.max(0, 40 - spread * 4);
+  }
+  return total;
+}
+
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<")
+             .replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => {
+    const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) {
+      for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>";
+    }
+    return tok;
+  }).join("");
+}
+
+function filterTable() {
+  const q = input.value.trim();
+  const terms = tokenize(q);
+  let visible = 0;
+  const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else {
+      row.style.display = ""; visible++;
+      Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms));
+      scored.push({ row, sc });
+    }
+  });
+  if (terms.length && scored.length) {
+    scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row));
+  }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+
+function resetAll() {
+  input.value = "";
+  allRows.forEach(r => tbody.appendChild(r));
+  filterTable();
+  input.focus();
+}
+
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col];
+  sortDir[col] = asc;
+  rows.sort((a, b) => {
+    const x = a.cells[col].textContent.trim().toLowerCase();
+    const y = b.cells[col].textContent.trim().toLowerCase();
+    return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+const catChips = ["Technique","Cancer cytogenetics","CNV mechanism","Translocation","Aneuploidy","Sex chromosome","Microdeletion","Imprinting"];
+const termChips = ["NAHR","alternate segregation","Barr bodies","Philadelphia","cat-like cry","Robertsonian","triploidy","CATCH-22"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip cat"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+termChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+
+tbody.addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (tr) tr.classList.toggle("hit");
+});
+
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
