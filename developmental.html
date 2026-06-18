@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Developmental Genetics — Qbank + OCR Lecture Master Table</title>
+<style>
+  :root { --accent:#15803d; --accent-dark:#116330; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(21,128,61,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#eef7f0; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#e6f4ea; color:var(--accent-dark); border:1px solid #a9d8b8; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.87em; }
+  th, td { border:1px solid #d4dae0; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#f1faf4; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.78em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🌱 ABMGG / ACMG Developmental Genetics — Master Study Table</h2>
+<p class="sub">Dysmorphology & malformation syndromes from your <b>ACMG Genetics Qbank</b> (33 Developmental Genetics questions) + the OCR'd <b>Developmental Genetics lecture</b>. Source column cites question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "molar tooth sign" · "postaxial polydactyly" · "synophrys" · "broad thumbs" · "malformation vs deformation"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Disorder<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Gene(s)<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Inheritance<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Key Clinical Features<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Diagnosis / Board Pearl<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(6)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ===== CRANIOSYNOSTOSIS / CILIOPATHY / BRAIN ===== -->
+    <tr><td>Apert syndrome</td><td>Craniosynostosis</td><td>FGFR2 (also FGFR3 — locus heterogeneity)</td><td class="gap">[not in source]</td><td>Craniosynostosis; <b>syndactyly</b>; broad thumbs & great toes (FGFR/SHH limb patterning)</td><td>Same phenotype from 2 different loci (FGFR2 & FGFR3) = <b>locus heterogeneity</b></td><td class="src"><span class="src-q">Dev Q252</span> <span class="src-lec">+ Lecture: Developmental Genetics</span></td></tr>
+    <tr><td>Saethre-Chotzen syndrome</td><td>Craniosynostosis</td><td>TWIST1 (transcription factor)</td><td class="gap">[not in source]</td><td>Craniosynostosis syndrome (TWIST TF mutation)</td><td>Syndrome ↔ TF mapping: Saethre-Chotzen = <b>TWIST</b> (vs Pfeiffer/FGFR1, campomelic/SOX9)</td><td class="src"><span class="src-q">Dev Q225, Q583</span></td></tr>
+    <tr><td>Joubert syndrome</td><td>Ciliopathy</td><td class="gap">[not in source]</td><td>Autosomal recessive</td><td>Neonatal hypotonia, congenital ataxia, episodic/dysregulated breathing, oculomotor apraxia, dev delay; <b>retinal dystrophy</b></td><td><b>Molar tooth sign</b> on MRI (brainstem/cerebellar peduncle malformation); ciliopathy</td><td class="src"><span class="src-q">Dev Q107, Q213, Q374, Q458, Q534</span></td></tr>
+    <tr><td>Meckel-Gruber syndrome</td><td>Ciliopathy</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Classic triad: <b>occipital meningoencephalocele + cystic kidneys + postaxial polydactyly</b>, often microcephaly</td><td>Encephalocele + cystic kidneys + postaxial polydactyly = Meckel (vs Joubert's molar tooth sign)</td><td class="src"><span class="src-q">Dev Q246</span></td></tr>
+    <tr><td>Holoprosencephaly</td><td>Brain malformation</td><td>SHH (Sonic Hedgehog pathway)</td><td class="gap">[not in source]</td><td>Midline defect spectrum: <b>single (central) maxillary incisor</b>, hypotelorism, choanal stenosis; failure of forebrain cleavage</td><td>Classic example of a <b>malformation</b> (intrinsically abnormal developmental process); SHH-pathway midline defect</td><td class="src"><span class="src-q">Dev Q13, Q23, Q564</span> <span class="src-lec">+ Lecture: Developmental Genetics</span></td></tr>
+    <tr><td>Lissencephaly</td><td>Brain malformation</td><td>LIS1 (Miller-Dieker), DCX (X-linked), ARX, RELN, VLDLR</td><td>XL / gene-dependent</td><td><b>Smooth brain (absent gyri)</b> — neuronal migration defect; severe ID, seizures; vs polymicrogyria/pachygyria/schizencephaly</td><td>Lissencephaly = smooth brain; Miller-Dieker = LIS1 (17p), X-linked = DCX</td><td class="src"><span class="src-q">Dev Q205</span> <span class="src-lec">+ Lecture: Developmental Genetics</span></td></tr>
+    <tr><td>CHARGE syndrome</td><td>Malformation syndrome</td><td>CHD7</td><td>Autosomal dominant</td><td><b>C</b>oloboma, <b>H</b>eart defects, <b>A</b>tresia choanae, <b>R</b>etardation, <b>G</b>enital anomalies, <b>E</b>ar anomalies/hearing loss; poor handling of secretions, FTT</td><td>CHARGE mnemonic + <b>CHD7</b>; coloboma + ear anomalies + hearing loss → sequence CHD7</td><td class="src"><span class="src-q">Dev Q13</span></td></tr>
+
+    <!-- ===== SKELETAL DYSPLASIA / LIMB ===== -->
+    <tr><td>Ellis-van Creveld (chondroectodermal dysplasia)</td><td>Skeletal dysplasia</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Newborn: <b>natal teeth</b>, accessory oral frenulae, ASD, narrow chest; <b>postaxial polydactyly</b></td><td>Natal teeth + frenulae + narrow chest + postaxial polydactyly = EVC</td><td class="src"><span class="src-q">Dev Q183</span></td></tr>
+    <tr><td>Larsen syndrome</td><td>Skeletal dysplasia / limb</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Widely-spaced eyes, flat nasal root, prominent forehead, cylindrical fingers, short stature; <b>multiple dislocated joints</b></td><td>Hypertelorism + flat face + cylindrical fingers + joint dislocations = Larsen</td><td class="src"><span class="src-q">Dev Q142</span></td></tr>
+    <tr><td>Pseudoachondroplasia</td><td>Skeletal dysplasia</td><td>COMP (cartilage oligomeric matrix protein)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>COMP dysplasia; contrast FGFR1→Pfeiffer, SOX9→campomelic, TWIST→Saethre-Chotzen, COL2→Stickler</td><td class="src"><span class="src-q">Dev Q583</span></td></tr>
+    <tr><td>Langer-Giedion syndrome (TRPS II)</td><td>Skeletal dysplasia (contiguous deletion)</td><td>EXT1 + TRPS1, <b>8q24 microdeletion</b></td><td class="gap">[not in source]</td><td>Abnormalities of hair, nose and phalanges + developmental delay; multiple exostoses</td><td>8q24 contiguous deletion: EXT1 (exostoses) + TRPS1 (trichorhinophalangeal); dx by FISH</td><td class="src"><span class="src-q">Dev Q473</span></td></tr>
+    <tr><td>Greig cephalopolysyndactyly</td><td>Limb malformation</td><td>GLI3</td><td class="gap">[not in source]</td><td>Polysyndactyly + macrocephaly/frontal bossing (GLI3 transcription-factor disorder)</td><td>GLI3 disorder; pre- and post-axial polydactyly (GLI3 = Hedgehog effector)</td><td class="src"><span class="src-q">Dev Q395</span></td></tr>
+    <tr><td>Townes-Brocks syndrome</td><td>Limb / malformation syndrome</td><td>SALL1</td><td class="gap">[not in source]</td><td>Over-folded ears, mild hearing loss, VSD, <b>imperforate anus</b>, cryptorchidism; <b>preaxial (thumb) polydactyly</b> (~89%)</td><td>Over-folded ears + imperforate anus + thumb polydactyly = Townes-Brocks (SALL1)</td><td class="src"><span class="src-q">Dev Q387</span></td></tr>
+    <tr><td>Hand-foot-uterus (hand-foot-genital)</td><td>Limb malformation (HOX disorder)</td><td>HOXA13 (HOXA cluster, chr 7)</td><td>AD</td><td>Short first metacarpal + small feet + <b>uterine anomalies (bicornuate/didelphys)</b> + urinary tract anomalies</td><td>Limb anomalies + Müllerian anomalies = <b>HOXA13</b> (vs Townes-Brocks hand+kidney+anal)</td><td class="src"><span class="src-q">Dev Q84</span></td></tr>
+    <tr><td>Popliteal pterygium syndrome</td><td>Limb / malformation syndrome</td><td>IRF6</td><td class="gap">[not in source]</td><td>Popliteal webs, cleft lip/palate spectrum (IRF6 disorder)</td><td>IRF6 — same gene as Van der Woude spectrum</td><td class="src"><span class="src-q">Dev Q345</span></td></tr>
+    <tr><td>Sacral agenesis (caudal regression)</td><td>Axial malformation</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Neonate of mother with <b>type 1 diabetes</b>; VSD + hypoglycemia + <b>sacral agenesis</b></td><td>Infant of diabetic mother + VSD + hypoglycemia → sacral agenesis / caudal regression</td><td class="src"><span class="src-q">Dev Q152</span></td></tr>
+    <tr><td>Limb development (concept)</td><td>Developmental concept</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Uses transcription factors (<b>FGFs → limb-bud outgrowth via AER</b>), morphogens (<b>SHH defines posterior/ZPA</b>; WNT7A dorsal), and <b>programmed cell death</b> (digit separation)</td><td>SHH = posterior morphogen, FGF = outgrowth, apoptosis = digit formation</td><td class="src"><span class="src-q">Dev Q275</span> <span class="src-lec">+ Lecture: Developmental Genetics</span></td></tr>
+
+    <!-- ===== SEQUENCES / CHROMATIN / MISC ===== -->
+    <tr><td>Amniotic band sequence</td><td>Disruption (limb)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td><b>Limb/digital anomalies from disruption</b> (breakdown of normally-developing tissue via amniotic bands); limb-reduction defects</td><td>Disruption = normal developmental potential interrupted (vs intrinsic malformation)</td><td class="src"><span class="src-q">Dev Q430, Q23</span> <span class="src-lec">+ Lecture: Developmental Genetics</span></td></tr>
+    <tr><td>Fraser syndrome (cryptophthalmos-syndactyly)</td><td>Malformation syndrome</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td><b>Cryptophthalmos</b> + ear anomalies + midline nasal cleft + widely-spaced nipples + cryptorchidism</td><td>Associated limb anomaly = <b>syndactyly</b></td><td class="src"><span class="src-q">Dev Q639</span></td></tr>
+    <tr><td>Congenital anomalies (concept)</td><td>Concept</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td><b>Malformation</b> = intrinsically abnormal program (holoprosencephaly, CHD, NTD); <b>Deformation</b> = mechanical force on normal tissue (clubfoot from oligohydramnios); <b>Disruption</b> = breakdown of normal tissue (amniotic bands); <b>Sequence</b> = one defect cascading (Robin: mandibular hypoplasia → cleft)</td><td>Ear overfolding w/ uterine fibroid = deformation; amniotic bands = disruption; holoprosencephaly = malformation</td><td class="src"><span class="src-q">Dev Q23, Q430</span> <span class="src-lec">+ Lecture: Developmental Genetics</span></td></tr>
+    <tr><td>Cornelia de Lange syndrome</td><td>Chromatin/transcription syndrome</td><td>NIPBL</td><td class="gap">[not in source]</td><td><b>Synophrys</b> + long eyelashes + upturned nose + hirsutism + microcephaly + FTT; upper-limb <b>reduction defects</b></td><td>Synophrys + limb reduction = CdLS (NIPBL, cohesinopathy)</td><td class="src"><span class="src-q">Dev Q162, Q167</span></td></tr>
+    <tr><td>Rubinstein-Taybi syndrome</td><td>Chromatin/transcription syndrome</td><td>CREBBP / EP300 (per classic teaching; pathway in source)</td><td class="gap">[not in source]</td><td><b>Broad thumbs & great toes</b> + speech delay + microcephaly + upturned nasal tip + cryptorchidism + FTT</td><td>Associated pathway = <b>Sonic Hedgehog</b>; broad thumbs is the recognition clue</td><td class="src"><span class="src-q">Dev Q295</span></td></tr>
+    <tr><td>Noonan syndrome</td><td>RASopathy</td><td class="gap">[not in source — pathway given]</td><td class="gap">[not in source]</td><td>Low-set ears + down-slanting palpebral fissures + webbed/short neck + pectus + <b>pulmonic stenosis</b> + short stature</td><td>Associated pathway = <b>RAS/MAPK</b> (RASopathy)</td><td class="src"><span class="src-q">Dev Q364</span></td></tr>
+    <tr><td>Waardenburg syndrome Type IIA</td><td>Transcription-factor syndrome</td><td>MITF</td><td class="gap">[not in source]</td><td>Sensorineural hearing loss + pigmentary changes (TF disorder); type IIA lacks dystopia canthorum</td><td>Waardenburg type IIA → <b>MITF</b></td><td class="src"><span class="src-q">Dev Q49</span></td></tr>
+    <tr><td>Alagille syndrome</td><td>Malformation/dysmorphology syndrome</td><td class="gap">[not in source — Notch pathway]</td><td class="gap">[not in source]</td><td>Prolonged jaundice + <b>bile duct paucity</b> + posterior embryotoxon + peripheral pulmonic stenosis + butterfly hemivertebrae</td><td>Associated pathway = <b>Notch</b> signaling (JAG1)</td><td class="src"><span class="src-q">Dev Q214</span></td></tr>
+    <tr><td>Smith-Lemli-Opitz syndrome</td><td>Malformation/dysmorphology syndrome</td><td class="gap">[not in source — cholesterol pathway]</td><td class="gap">[not in source]</td><td>Cognitive delay + microcephaly + hypertelorism + cryptorchidism + hypospadias + <b>2-3 toe syndactyly</b>; FTT</td><td>Associated pathway = <b>cholesterol biosynthesis</b> (DHCR7; ↑7-dehydrocholesterol)</td><td class="src"><span class="src-q">Dev Q563</span></td></tr>
+    <tr><td>Thalassemia (concept: locus heterogeneity)</td><td>Concept</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>α-thalassemia (α-globin deletions) and β-thalassemia (β-globin) both cause anemia</td><td><b>Locus heterogeneity</b> = same phenotype from mutations at ≥2 loci (α- vs β-globin)</td><td class="src"><span class="src-q">Dev Q131</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Qbank "Developmental Genetics" question #</span>; <span class="src src-lec">purple = OCR'd Developmental Genetics lecture</span>. <span class="gap">[bracketed grey]</span> = source silent (many questions test recognition/pathways rather than gene/inheritance — those cells note the pathway where the rationale gave it). Built from 33 Developmental Qbank questions + the lecture.</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity</b>; <b>Fuzzy</b> typo tolerance (e.g. <i>"polydactly"→polydactyly</i>, <i>"synophris"→synophrys</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by category.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) { let cur = [i];
+    for (let j = 1; j <= n; j++) { const cost = a[i-1] === b[j-1] ? 0 : 1; cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost); }
+    prev = cur; }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length); let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) { const sub = word.substr(s, term.length); if (!sub) break; best = Math.min(best, editDistance(term, sub)); if (best === 0) break; }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText); const positions = []; let total = 0;
+  for (const term of terms) { let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => { const s = termMatchesWord(term, w); if (s > bestScore) { bestScore = s; bestPos = idx; } });
+    if (bestScore === 0) return null; total += bestScore; positions.push(bestPos); }
+  if (proxOn.checked && positions.length > 1) { const spread = Math.max(...positions) - Math.min(...positions); total += Math.max(0, 40 - spread * 4); }
+  return total;
+}
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<").replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => { const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) { for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>"; }
+    return tok; }).join("");
+}
+function filterTable() {
+  const q = input.value.trim(); const terms = tokenize(q); let visible = 0; const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else { row.style.display = ""; visible++; Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms)); scored.push({ row, sc }); }
+  });
+  if (terms.length && scored.length) { scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row)); }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+function resetAll() { input.value = ""; allRows.forEach(r => tbody.appendChild(r)); filterTable(); input.focus(); }
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col]; sortDir[col] = asc;
+  rows.sort((a, b) => { const x = a.cells[col].textContent.trim().toLowerCase(); const y = b.cells[col].textContent.trim().toLowerCase(); return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1); });
+  rows.forEach(r => tbody.appendChild(r));
+}
+const catChips = ["Craniosynostosis","Ciliopathy","Brain malformation","Skeletal dysplasia","Limb malformation","RASopathy","Concept"];
+const termChips = ["molar tooth sign","postaxial polydactyly","synophrys","broad thumbs","malformation","deformation","disruption"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => { const c = document.createElement("span"); c.className = "chip cat"; c.textContent = e; c.onclick = () => { input.value = e; filterTable(); input.focus(); }; chipBox.appendChild(c); });
+termChips.forEach(e => { const c = document.createElement("span"); c.className = "chip"; c.textContent = e; c.onclick = () => { input.value = e; filterTable(); input.focus(); }; chipBox.appendChild(c); });
+tbody.addEventListener("click", e => { const tr = e.target.closest("tr"); if (tr) tr.classList.toggle("hit"); });
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
