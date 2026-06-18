@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Genomics Basics & Genomic Medicine — Qbank + OCR Lecture Table</title>
+<style>
+  :root { --accent:#0369a1; --accent-dark:#075985; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(3,105,161,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#eaf3fa; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#e3f0f8; color:var(--accent-dark); border:1px solid #a8cfe6; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.9em; }
+  th, td { border:1px solid #d4dae0; padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#eff7fc; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.8em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🧬 ABMGG / ACMG Genomics Basics &amp; Genomic Medicine — Master Study Table</h2>
+<p class="sub">Sequencing, variant interpretation, pharmacogenomics & GWAS/PRS from the OCR'd <b>Genomics Basics lecture</b> + the <b>Genomic Medicine Qbank</b>. Source column cites question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "PVS1" · "long-read structural variant" · "CYP2C19 clopidogrel" · "ivacaftor G551D" · "odds ratio" · "CDC Tier 1"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Topic / Concept<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Key Facts &amp; Numbers<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Clinical Use / Board Pearl<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ===== SEQUENCING & VARIANT INTERPRETATION ===== -->
+    <tr><td>Sanger sequencing (chain termination)</td><td>Sequencing technology</td><td><b>Chain-terminating (dideoxy) nucleotides</b>; fluorescent terminator; 1 primer/reaction; reads <b>400-800 bp</b>; ABI 1986. Challenged by high GC, secondary structure, pseudogenes, repeats, homopolymers</td><td>Confirms variants; detects SNVs & small indels; gold-standard for single intervals; <b>may miss structural variants beyond gene boundaries</b></td><td class="src"><span class="src-q">GenMed Q18</span> <span class="src-lec">+ Lecture: Genomics Basics</span></td></tr>
+    <tr><td>Pyrosequencing</td><td>Sequencing technology</td><td><b>Sequencing by synthesis</b>; PPi → ATP (sulfurylase) → luciferase light; light intensity = # of same nucleotides in a row; reads <b>30-50 bases</b></td><td>Short DNA stretches; used by Roche NGS platform</td><td class="src"><span class="src-lec">Lecture: Genomics Basics</span></td></tr>
+    <tr><td>Next-generation sequencing (NGS) — panels / exome / genome</td><td>Sequencing technology</td><td><b>Massively parallel.</b> Exome: ~2% of genome, >99% exon coverage, ~100k variants/person. Genome: no enrichment, ~4-5M variants/person. Platforms: Illumina (bridge amp), PacBio, Ion (pH), Nanopore (voltage). Pipeline FASTQ → BAM → VCF</td><td>Gene panels cover causal genes for disorders with <b>locus heterogeneity</b> (± CNV by NGS/MLPA)</td><td class="src"><span class="src-q">GenMed Q18</span> <span class="src-lec">+ Lecture: Genomics Basics</span></td></tr>
+    <tr><td>Long-read sequencing</td><td>Sequencing technology</td><td><b>Highest sensitivity for pathogenic structural variants</b>; exome and genome sequencing miss many SVs</td><td><b>Use when structural variants/repeat expansions suspected</b>; superior to exome/genome/Sanger for SV detection</td><td class="src"><span class="src-q">GenMed Q18</span></td></tr>
+    <tr><td>Variant types: SNV vs CNV (sizes)</td><td>Variant interpretation</td><td><b>SNV = 1 bp</b>; indels 2 bp–1 kb; STRs (tri-repeat disorders); VNTRs; <b>CNV = 1 kb+</b>; plus visible del/dup/translocations</td><td>Variant size dictates technology choice; trinucleotide expansions cause repeat disorders (Fragile X, myotonic dystrophy)</td><td class="src"><span class="src-lec">Lecture: Genomics Basics</span></td></tr>
+    <tr><td>ACMG/AMP classification &amp; PVS1 (loss-of-function)</td><td>Variant interpretation</td><td><b>PVS1 = null / loss-of-function variant</b> (e.g. nonsense). Full very-strong weight when: LOF is established mechanism, exon not alternatively spliced, and variant not in last exon. <b>Last-exon variants escape nonsense-mediated decay → downgrade</b></td><td>For an AD nonsense variant, full PVS1 justified when the exon harbors other pathogenic LOF variants. Do NOT apply if gene acts via gain-of-function</td><td class="src"><span class="src-q">GenMed Q17</span></td></tr>
+    <tr><td>Testing strategy matched to variant spectrum</td><td>Variant interpretation</td><td>Identity QC → STR fragment analysis. Large expansions (Fragile X, DM1) → Southern blot / triplet-primed PCR. Point variants → PCR/RFLP, allele-specific PCR. Del/dup → MLPA, exon array, karyotype. Methylation (PWS/AS/BWS) → MS-PCR/MLPA</td><td><b>Match the test to the pathogenic-variant spectrum</b>; check gene coverage before ordering</td><td class="src"><span class="src-lec">Lecture: Genomics Basics</span></td></tr>
+
+    <!-- ===== PHARMACOGENOMICS / GWAS / PRS / POPULATION ===== -->
+    <tr><td>Pharmacogenetics — drug metabolism (CYP enzymes)</td><td>Pharmacogenomics</td><td><b>CYP2C19 activates the prodrug clopidogrel</b> — poor metabolizer → drug ineffective. Warfarin: <b>VKORC1</b> (sensitivity/target) + <b>CYP2C9</b> (metabolism). CYP2D6 metabolizes many drugs but NOT warfarin/clopidogrel</td><td>Test <b>CYP2C19 before clopidogrel</b>; test <b>VKORC1 + CYP2C9</b> before warfarin. Distinguish prodrug activation from clearance</td><td class="src"><span class="src-q">GenMed Q1, Q7</span></td></tr>
+    <tr><td>Malignant hyperthermia (anesthesia susceptibility)</td><td>Pharmacogenomics</td><td>Frequency ~<b>1:10,000</b>; <b>autosomal dominant</b> → each child's risk = <b>1/2</b>. <b>RYR1</b> mutant channels → ↑ sarcoplasmic-reticulum Ca²⁺ release with volatile anesthetics/succinylcholine</td><td>AD → 50% transmission; <b>RYR1 → malignant hyperthermia</b> triggered at anesthesia induction</td><td class="src"><span class="src-q">GenMed Q2, Q7</span></td></tr>
+    <tr><td>Pharmacogenetics — HLA-linked adverse drug reactions</td><td>Pharmacogenomics</td><td><b>HLA-B*15:02 → carbamazepine-induced Stevens-Johnson syndrome</b> (Southeast Asian ancestry). Others: <b>SLCO1B1</b> → statin myopathy; <b>TPMT</b> → 6-mercaptopurine toxicity</td><td>Screen <b>HLA-B before carbamazepine</b> in at-risk Asian populations; ancestry-specific testing</td><td class="src"><span class="src-q">GenMed Q6</span></td></tr>
+    <tr><td>Pharmacogenetics clinical resources</td><td>Pharmacogenomics</td><td><b>CPIC (Clinical Pharmacogenetics Implementation Consortium)</b> = peer-reviewed gene/drug clinical practice guidelines. NOT implementation guidelines: GTR, OMIM, PharmGKB</td><td>To build a PGx program, use <b>CPIC</b> for actionable gene-drug guidelines</td><td class="src"><span class="src-q">GenMed Q8</span></td></tr>
+    <tr><td>Precision medicine — CFTR modulators by genotype</td><td>Precision / targeted therapy</td><td><b>Ivacaftor</b> effective in CF with a <b>G551D gating allele</b>. FDA-approved modulators = potentiators/correctors targeting specific CFTR variants. NOT approved (research): CRISPR, gene therapy, stop-codon read-through</td><td><b>Ivacaftor (potentiator) for G551D</b> — genotype-directed therapy</td><td class="src"><span class="src-q">GenMed Q4, Q9</span></td></tr>
+    <tr><td>GWAS &amp; odds ratios</td><td>GWAS / PRS</td><td>Case-control example: allele in <b>20% controls, 40% cases</b> → odds carriers 40/20=2, non-carriers 60/80=0.75, <b>OR = 2.66</b></td><td>OR = (odds in exposed)/(odds in unexposed); OR &gt;1 = increased disease odds for carriers</td><td class="src"><span class="src-q">GenMed Q5</span> <span class="src-lec">+ Lecture: Genomics Basics</span></td></tr>
+    <tr><td>Polygenic risk scores (PRS)</td><td>GWAS / PRS</td><td>Derived from <b>GWAS</b> (variants + effect sizes); computed by <b>summing risks across many variants</b>. <b>Population-specific — not portable across ancestries</b>. Estimate risk but do NOT diagnose</td><td>PRS = risk-estimation tool, not diagnostic; ancestry mismatch limits use (distractor: "can diagnose" = false)</td><td class="src"><span class="src-q">GenMed Q13, Q19</span> <span class="src-lec">+ Lecture: Genomics Basics</span></td></tr>
+    <tr><td>CDC Tier 1 conditions &amp; population screening</td><td>Population genomics</td><td><b>CDC Tier 1 = HBOC (hereditary breast & ovarian cancer), Lynch syndrome, familial hypercholesterolemia (FH)</b>. NOT Tier 1: Alzheimer, autism, Fragile X, PTEN</td><td>Memorize the <b>three CDC Tier 1 disorders (HBOC / Lynch / FH)</b> — evidence-based for population genomic screening</td><td class="src"><span class="src-q">GenMed Q12</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Qbank "Genomic Medicine" question #</span>; <span class="src src-lec">purple = OCR'd Genomics Basics lecture</span>. Built from the Genomics Basics lecture + 13 Genomic Medicine Qbank questions. (This also covers the genomics half of the "Genetics Review Course 20" review lecture; its cytogenetics half is in the Cytogenetics table.)</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity</b>; <b>Fuzzy</b> typo tolerance (e.g. <i>"clopidogrel"</i>, <i>"ivacaftor"</i>, <i>"polygenic"</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by category.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) { let cur = [i];
+    for (let j = 1; j <= n; j++) { const cost = a[i-1] === b[j-1] ? 0 : 1; cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost); }
+    prev = cur; }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length); let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) { const sub = word.substr(s, term.length); if (!sub) break; best = Math.min(best, editDistance(term, sub)); if (best === 0) break; }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText); const positions = []; let total = 0;
+  for (const term of terms) { let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => { const s = termMatchesWord(term, w); if (s > bestScore) { bestScore = s; bestPos = idx; } });
+    if (bestScore === 0) return null; total += bestScore; positions.push(bestPos); }
+  if (proxOn.checked && positions.length > 1) { const spread = Math.max(...positions) - Math.min(...positions); total += Math.max(0, 40 - spread * 4); }
+  return total;
+}
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<").replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => { const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) { for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>"; }
+    return tok; }).join("");
+}
+function filterTable() {
+  const q = input.value.trim(); const terms = tokenize(q); let visible = 0; const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else { row.style.display = ""; visible++; Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms)); scored.push({ row, sc }); }
+  });
+  if (terms.length && scored.length) { scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row)); }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+function resetAll() { input.value = ""; allRows.forEach(r => tbody.appendChild(r)); filterTable(); input.focus(); }
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col]; sortDir[col] = asc;
+  rows.sort((a, b) => { const x = a.cells[col].textContent.trim().toLowerCase(); const y = b.cells[col].textContent.trim().toLowerCase(); return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1); });
+  rows.forEach(r => tbody.appendChild(r));
+}
+const catChips = ["Sequencing technology","Variant interpretation","Pharmacogenomics","GWAS / PRS","Population genomics","Precision / targeted therapy"];
+const termChips = ["PVS1","long-read","CYP2C19","ivacaftor","odds ratio","CDC Tier 1","malignant hyperthermia"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => { const c = document.createElement("span"); c.className = "chip cat"; c.textContent = e; c.onclick = () => { input.value = e; filterTable(); input.focus(); }; chipBox.appendChild(c); });
+termChips.forEach(e => { const c = document.createElement("span"); c.className = "chip"; c.textContent = e; c.onclick = () => { input.value = e; filterTable(); input.focus(); }; chipBox.appendChild(c); });
+tbody.addEventListener("click", e => { const tr = e.target.closest("tr"); if (tr) tr.classList.toggle("hit"); });
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
