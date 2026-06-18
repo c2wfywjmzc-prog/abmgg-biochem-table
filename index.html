@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Biochemical Genetics — Qbank + OCR Lecture Master Table (Fuzzy + Proximity Search)</title>
+<style>
+  :root { --accent:#0d6efd; --accent-dark:#0b5ed7; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(13,110,253,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#eef3ff; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:#0d6efd; }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#e7f0ff; color:#0b5ed7; border:1px solid #b9d4ff; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:#0d6efd; color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.88em; }
+  th, td { border:1px solid #d4dae0; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#f6f8fb; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .tag-yes { color:#b02a37; font-weight:700; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.78em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .src-none { color:#b06a00; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🧬 ABMGG / ACMG Biochemical Genetics — Master Study Table</h2>
+<p class="sub">All inborn errors of metabolism from your <b>ACMG Genetics Qbank</b> (95 Biochemical/NBS questions) + the OCR'd <b>Biochem I &amp; II lectures</b>. Source column cites the exact question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "cherry red spot" · "hyperammonemia orotic" · "sweaty feet" · "VLCFA" · "hypoketotic" · "fructoze"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Disorder<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Enzyme / Gene<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Triggers<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Key Clinical<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Hemolysis?<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(6)">Untreated Seriousness<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(7)">Treatment / Prognosis<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(8)">Board Pearl / Dx<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(9)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ===================== CARBOHYDRATE ===================== -->
+    <tr><td>Classic Galactosemia</td><td>Carbohydrate — galactose metabolism</td><td>GALT (chr 9p13); AR; freq 1/35,000–1/60,000 (1/16,476 Ireland); common variant p.Q188R</td><td>Lactose / galactose (breast milk, formula)</td><td>Neonate: poor weight gain, feeding difficulty, jaundice, vomiting, diarrhea, lethargy/coma, hypotonia, brain edema/bulging fontanel, cataracts, hepatomegaly, bleeding; <b>E. coli sepsis (often fatal)</b></td><td class="gap">[not stated — coagulopathy noted, not hemolysis]</td><td>Very High — E. coli sepsis often fatal; hepatic failure</td><td>Eliminate lactose formula + breastfeeding; monitor sepsis & coagulopathy. Diet-INDEPENDENT long-term: speech/language delay, learning deficits, ↓ bone mineralization, primary ovarian insufficiency</td><td>NBS = low GALT. Duarte ~25% activity = benign. Long-term complications persist despite diet</td><td class="src"><span class="src-q">Qbank Q20, Q38, Q42, Q92</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Hereditary Fructose Intolerance (HFI)</td><td>Carbohydrate — fructose metabolism</td><td>Aldolase B (ALDOB); AR; A149P ≈70% of mutant alleles</td><td>Dietary fructose — sucrose, fruits, honey</td><td>Asymptomatic without dietary fructose; nausea, vomiting, hypoglycemia & metabolic acidosis following fructose; occasional chronic FTT</td><td>No</td><td>Significant with continued fructose (chronic FTT)</td><td>Fructose avoidance; tolerance may improve with age</td><td>Dx = controlled fructose load; AR aldolase B defect (A149P ≈70%)</td><td class="src"><span class="src-lec">Lecture: Biochem I</span> <span class="gap">(not in Qbank)</span></td></tr>
+    <tr><td>Congenital Lactic Acidosis (FBPase / PDH / PC)</td><td>Carbohydrate — gluconeogenesis & pyruvate metab</td><td>FBP1 (F-1,6-bisphosphatase), PDHA1 (pyruvate dehydrogenase), PC (pyruvate carboxylase)</td><td>Fasting (FBPase, PC)</td><td>Spectrum: severe neonatal lactic acidosis ± congenital malformations (agenesis of corpus callosum); chronic form with MR, seizures, hypotonia; episodic ± FTT</td><td>No</td><td>Very High in severe neonatal form</td><td class="gap">[Rx not detailed in lecture]</td><td>Dx = ↑ plasma/CSF lactate; NORMAL lactate:pyruvate ratio (PDH/PC); hypoglycemia (PC, FBPase); molecular</td><td class="src"><span class="src-lec">Lecture: Biochem I</span> <span class="gap">(not in Qbank)</span></td></tr>
+    <tr><td>GSD Ia (Von Gierke)</td><td>Carbohydrate — glycogen storage</td><td>Glucose-6-phosphatase (G6PC) ≈80–90% of GSD I; liver-only; AR</td><td>Fasting</td><td><b>Most severe GSD:</b> hepatomegaly, short stature, chubby cheeks, epistaxis & bleeding, severe fasting hypoglycemia. Late: osteopenia/fractures, gout, pancreatitis, renal disease, hepatic adenoma/carcinoma</td><td>No</td><td>Most severe of the GSDs — severe fasting hypoglycemia</td><td>Frequent complex-carb feeds, cornstarch/Beneprotein; avoid lactose/fructose/galactose; DDAVP for bleeding; allopurinol; monitor renal fx; liver US/MRI + AFP; AAV gene therapy pending FDA</td><td>Dx = hypoglycemia, ↑ TG/chol/lactate/uric acid, NO glucagon response, LFTs usually normal. G6Pase liver-only → liver assay or G6PC molecular</td><td class="src"><span class="src-q">Qbank Q21, Q77</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>GSD Ib</td><td>Carbohydrate — glycogen storage</td><td>Glucose-6-phosphate translocase (SLC37A4) ≈10–20% of GSD I; AR</td><td>Fasting</td><td>Same as GSD Ia PLUS neutropenia, chronic infections, oral/intestinal ulcerations, chronic inflammatory bowel disease</td><td>No</td><td>Fasting hypoglycemia + infection risk from neutropenia</td><td>As GSD Ia + G-CSF and SGLT2 inhibitors (empagliflozin) for Ib neutropenia</td><td>Empagliflozin (SGLT2i) ↓ 1,5-anhydroglucitol-6-phosphate → improves neutrophil dysfunction. Translocase defect distinguishes Ib from Ia</td><td class="src"><span class="src-q">Qbank Q21, Q23</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Pompe Disease (GSD II)</td><td>Carbohydrate — lysosomal glycogen storage</td><td>Acid α-glucosidase (GAA); lysosomal; AR</td><td>Progressive lysosomal accumulation</td><td>Infantile: hypotonia, cardiomegaly, large tongue (macroglossia), hepatomegaly; juvenile form with progressive muscle weakness</td><td>No</td><td>Very High — early death untreated (infantile)</td><td>ERT (prenatal ERT via IND at UCSF). Late sx with ERT: hearing loss, osteopenia, motor/speech delay, GE reflux; >90% develop non-inhibitory IgG antibodies</td><td>Dx = ↑ CPK, massive QRS on EKG; enzyme assay or molecular. NBS = low acid α-glucosidase. Only GSD that is a lysosomal storage disease</td><td class="src"><span class="src-q">Qbank Q22, Q45, Q55, Q68, Q70</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>McArdle (GSD V)</td><td>Carbohydrate — muscle glycogenosis</td><td>Myophosphorylase (PYGM)</td><td>Short, high-intensity exercise</td><td>Exercise intolerance, second-wind phenomenon, rhabdomyolysis / myoglobinuria</td><td>No</td><td>Rhabdomyolysis → AKI risk</td><td>Pre-exercise sucrose, warm-up, avoid high-intensity bursts</td><td>Reference row (classic ABMGG content)</td><td class="src src-none">not in Qbank or Biochem lectures</td></tr>
+
+    <!-- ===================== AMINO ACIDOPATHIES ===================== -->
+    <tr><td>Phenylketonuria (PKU)</td><td>Amino acidopathy</td><td><b>PAH</b> (phenylalanine hydroxylase); BH4 (tetrahydrobiopterin) cofactor; AR</td><td>Dietary phenylalanine; TPN gives exogenous Phe (false-positive NBS); immature HPPD in preterm</td><td>↑Phe / ↑Phe:Tyr ratio; usually asymptomatic in neonate; untreated → ID/seizures, "mousy" odor. ~2% = biopterin synthesis/recycling defect</td><td class="gap">[not in source]</td><td>Not acutely life-threatening (unlike MCAD); untreated → neurologic ID/seizures</td><td>Plasma AA + urine pterins to exclude BH4 disorders AND start Phe-free formula simultaneously. BH4 (sapropterin) for responders</td><td>Test ALL hyperphe for biopterin defect (blood+urine pterins); stop TPN ~4-6h & recheck Phe to exclude iatrogenic elevation</td><td class="src"><span class="src-q">Qbank Q8, Q10, Q32, Q33, Q37, Q50, Q76, Q94</span></td></tr>
+    <tr><td>Maple Syrup Urine Disease (MSUD)</td><td>Amino acidopathy</td><td><b>BCKDH</b> complex; BCKDHA / BCKDHB / DBT / DLD (DLD/E3 = Type 3); AR</td><td>Catabolic stress / protein intake → ↑branched-chain AAs (Leu, Ile, Val)</td><td>Sweet maple-syrup / burnt-sugar (sotolone) urine odor; neonatal encephalopathy: irritability, opisthotonos, apnea, coma; <b>leucine most neurotoxic → cerebral edema</b>. Acidosis with NORMAL ammonia</td><td class="gap">[not in source]</td><td>Classic neonatal form life-threatening; crisis → cerebral edema, herniation, death</td><td>Crisis: high calories (anabolism), BCAA-free medical food, hemodialysis for severe ↑leucine (>1500). Avoid 2× maintenance hypotonic fluids (worsens edema)</td><td>Sweet odor + neonatal encephalopathy = MSUD; metabolic acidosis with NORMAL ammonia distinguishes from organic acidemias/UCDs</td><td class="src"><span class="src-q">Qbank Q9, Q17, Q37, Q44, Q59</span></td></tr>
+    <tr><td>Homocystinuria</td><td>Amino acidopathy</td><td><b>CBS</b> (cystathionine β-synthase) deficiency, classic form; AR</td><td class="gap">[not in source]</td><td>↑Homocysteine + ↑methionine (HIGH in CBS vs LOW in remethylation defects); marfanoid habitus, <b>lens subluxation DOWNWARD/inferonasal</b> (opposite of Marfan), ID, osteoporosis</td><td class="gap">[not in source]</td><td>Thromboembolism = leading cause of M&M; ~50% have event / die by 20–30</td><td>B6-responsive in ~50% (pyridoxine); anticoagulation around surgery/immobilization</td><td>Thrombosis/strokes → think homocystinuria; downward lens subluxation distinguishes from Marfan (upward); methionine HIGH in CBS deficiency</td><td class="src"><span class="src-q">Qbank Q1, Q41, Q42, Q43</span></td></tr>
+    <tr><td>Tyrosinemia Type I (hepatorenal)</td><td>Amino acidopathy</td><td><b>FAH</b> (fumarylacetoacetate hydrolase) — last step of tyrosine degradation; AR</td><td class="gap">[not in source]</td><td>↑Tyrosine + <b>succinylacetone (pathognomonic)</b>; cabbage odor; acute liver failure (jaundice, coagulopathy, ↑AFP); chronic FTT, renal Fanconi → hypophosphatemic rickets; porphyria-like crises</td><td class="gap">[not in source]</td><td>Progressive liver failure; HCC risk >35% by age 5 without nitisinone</td><td>NTBC (nitisinone) + low-tyrosine diet (Tyrex); markedly reduced transplant need; HCC risk <5% if started early</td><td>Succinylacetone (urine/blood) pathognomonic — more specific than ↑tyrosine; succinylacetone + liver failure + ↑AFP = Tyrosinemia I</td><td class="src"><span class="src-q">Qbank Q19, Q31, Q89</span></td></tr>
+    <tr><td>Nonketotic Hyperglycinemia (NKH)</td><td>Amino acidopathy</td><td><b>Glycine cleavage system</b> (subunits P/T/H/L); GLDC (~80%), AMT, GCSH; AR</td><td class="gap">[not in source]</td><td>Classic infantile: neonatal hypotonia, intractable seizures, apnea, <b>hiccups</b> (may be prenatal); glycine ↑ in brain/CSF, excitatory via NMDA; burst-suppression EEG</td><td class="gap">[not in source]</td><td>Severe form: lethargy → myoclonic seizures → apnea → coma within days; profound ID</td><td>Ketogenic diet (lowers glycine); sodium benzoate (excretes glycine); dextromethorphan (NMDA antagonist)</td><td>Hiccups + hypotonia + seizures + apnea in neonate ≈ pathognomonic; <b>CSF:plasma glycine ratio >0.08</b> diagnostic (plasma alone not specific)</td><td class="src"><span class="src-q">Qbank Q17, Q24, Q25</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Gyrate Atrophy</td><td>Amino acidopathy</td><td><b>OAT</b> (ornithine aminotransferase) deficiency; AR</td><td class="gap">[not in source]</td><td>↑Plasma ornithine (hyperornithinemia — shared with HHH); progressive chorioretinal atrophy: sharply demarcated circular patches periphery → center</td><td class="gap">[not in source]</td><td>Progressive retinal degeneration → blindness by 40s–50s</td><td>Low-arginine diet + pyridoxine (B6-responsive subgroup) slow progression</td><td>Dx by ↑ornithine on plasma AA; hyperornithinemia is the abnormality shared with HHH (retinal degeneration NOT in HHH)</td><td class="src"><span class="src-q">Qbank Q82</span></td></tr>
+
+    <!-- ===================== ORGANIC ACIDEMIAS + VITAMIN/COFACTOR ===================== -->
+    <tr><td>Propionic Acidemia (PA)</td><td>Organic acidemia</td><td>Propionyl-CoA carboxylase (PCCA/PCCB); biotin cofactor; AR</td><td>Illness, fasting, protein load; gut anaerobes generate propionate</td><td>Neonatal poor feeding, vomiting, lethargy → <b>metabolic acidosis + 2° hyperammonemia</b>; ketoacidosis, ↑anion gap, hypoglycemia; metabolites of Val/Met/Ile/Thr + odd-chain FA (VOMIT)</td><td class="gap">[not in source]</td><td>Severe neonatal crisis; pancytopenia, cardiomyopathy (major cause of death), basal ganglia "metabolic strokes", pancreatitis, renal disease</td><td>Low-protein diet (Propimex, restrict VOMIT) + carnitine + metronidazole (↓gut propionate); carglumic acid for hyperammonemia</td><td><b>↑C3 acylcarnitine</b> on NBS (same as MMA); UOA: 3-OH-propionate, methylcitrate, propionylglycine — but NO methylmalonic acid (distinguishes from MMA)</td><td class="src"><span class="src-q">Qbank Q9, Q11, Q13, Q14, Q25, Q26, Q36, Q37, Q79, Q87</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Methylmalonic Acidemia (MMA)</td><td>Organic acidemia</td><td>Methylmalonyl-CoA mutase (MUT; mut⁰/mut⁻) or cobalamin defects (cblA, cblB); adenosyl-B12 cofactor; AR</td><td>Illness, fasting, protein load; gut flora propionate</td><td>Neonatal metabolic acidosis, ↑NH₃, lethargy, vomiting, ketoacidosis; later macrocytic anemia, gait/cognition changes (Cbl defects); cblC/D/F also ↑homocysteine; ↑glycine</td><td class="gap">[not in source]</td><td>Metabolic stroke (basal ganglia); progressive renal failure (transplant), pancreatitis, optic atrophy, cardiomyopathy, BM suppression</td><td>Low-protein/restrict precursors + carnitine + metronidazole; <b>OH-B12 for cbl-responsive forms (cblA, cblB)</b>; carglumic acid for hyperammonemia</td><td>↑C3 acylcarnitine on NBS (same as PA); <b>UOA shows methylmalonic acid (absent in PA)</b>; ALWAYS trial B12 responsiveness</td><td class="src"><span class="src-q">Qbank Q9, Q14, Q26, Q34, Q36, Q37, Q72, Q79, Q87</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Isovaleric Acidemia (IVA)</td><td>Organic acidemia</td><td>Isovaleryl-CoA dehydrogenase (IVD); AR</td><td>First week of life; poor feeding (leucine catabolism defect)</td><td>Poor feeding, vomiting, seizures; <b>odor of sweaty feet</b>; metabolic acidosis, ↑anion gap, ↑NH₃, ketonuria, neutropenia + thrombocytopenia</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Low-protein diet + formula (Valex), glycine, carnitine; carglumic acid for hyperammonemia</td><td><b>Sweaty-feet odor</b> + isolated ↑C5 acylcarnitine on NBS; UOA: isovaleric & 3-OH-isovaleric acid, isovalerylglycine</td><td class="src"><span class="src-q">Qbank Q14, Q17, Q27, Q36, Q37</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Glutaric Acidemia Type I (GA1)</td><td>Organic acidemia</td><td>Glutaryl-CoA dehydrogenase (GCDH); Lys/Trp metabolism; AR</td><td>Acute encephalopathic crisis triggered by illness at age 6–18 mo</td><td><b>Macrocephaly</b> at birth (frontotemporal atrophy); dystonic/choreoathetotic movement disorder; crisis → acute striatal necrosis → irreversible dystonia; subdural hemorrhages (mimic abuse)</td><td class="gap">[not in source]</td><td>~90% develop movement disorder untreated; chronic striatal injury</td><td>Low-protein/Lys-restricted diet + carnitine + riboflavin + emergency protocol; >80% develop normally with early Rx</td><td><b>Macrocephaly + movement disorder, preserved cognition</b> (treated); NBS via ↑C5-DC; UOA: ↑glutaric & 3-OH-glutaric acid</td><td class="src"><span class="src-q">Qbank Q16, Q60</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Biotinidase Deficiency</td><td>Vitamin/cofactor disorder</td><td>Biotinidase (recovers protein-bound biotin); <span class="gap">[inheritance not in source]</span></td><td class="gap">[not in source]</td><td>Neonates usually asymptomatic; later <b>developmental delay, seizures, alopecia, hearing loss, skin rash</b></td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Vitamin B7 (biotin) supplementation</td><td><b>↑C5-OH</b> on NBS (not C5; not C3); <b>DECREASED</b> biotinidase enzyme level = deficiency; B7 is treatment</td><td class="src"><span class="src-q">Qbank Q33, Q36, Q42, Q43</span></td></tr>
+    <tr><td>Holocarboxylase Synthetase Deficiency</td><td>Vitamin/cofactor (multiple carboxylase)</td><td>Holocarboxylase synthase (HCS) — attaches biotin to 4 carboxylases; functional deficiency of all; AR</td><td class="gap">[not in source]</td><td>Poor feeding, vomiting, seizures; <b>odor of cat's urine</b>; skin rash & alopecia in later-onset; metabolic acidosis & ketosis, ↑anion gap, ↑NH₃</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Support during crises; <b>10–90 mg/day biotin virtually curative</b></td><td><b>↑C5-OH</b> on NBS; UOA: 3-OH-isovalerate, methylcitrate, 3-methylcrotonylglycine, propionylglycine</td><td class="src"><span class="src-q">Qbank Q36</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Maternal Vitamin B12 Deficiency</td><td>Acquired/maternal nutritional (B12)</td><td>Not enzymatic — maternal B12 deficiency (pernicious anemia or strict vegan); via exclusive breastfeeding</td><td>Exclusive breastfeeding by B12-deficient mother</td><td>Infant (~6 mo) <b>megaloblastic anemia</b>; mildly ↑urine MMA + ↑plasma homocysteine; multiple breastfed sibs (even half-sibs) affected then resolve</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Transient/resolves; evaluate serum B12 + homocysteine in the MOTHER</td><td><b>Half-sibs with different fathers</b> affected → AR cobalamin defect unlikely → maternal/environmental B12 deficiency; check mother first</td><td class="src"><span class="src-q">Qbank Q34</span></td></tr>
+    <tr><td>Transcobalamin II Deficiency</td><td>Inherited cobalamin transport defect</td><td>Transcobalamin II; AR</td><td class="gap">[not in source]</td><td>Megaloblastic anemia in infants, often with FTT; very rare</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td class="gap">[not in source — measure TC-II level to dx]</td><td>Rare AR cause of infantile megaloblastic anemia; made unlikely when affected sibs have different fathers; dx by TC-II level</td><td class="src"><span class="src-q">Qbank Q34</span></td></tr>
+    <tr><td>Cerebral Folate Deficiency</td><td>Brain-specific folate transport disorder</td><td>Folate receptor (FOLR1) mutations or FOLR1 autoantibodies; AR</td><td class="gap">[not in source]</td><td>Onset ~4–6 mo: irritability, sleep disturbance, decelerating head growth; <b>hypotonia, developmental delay, refractory seizures</b>; regression, ataxia, spasticity</td><td class="gap">[not in source]</td><td>Progressive neurodegeneration, loss of ambulation, refractory epilepsy</td><td><b>High-dose folinic acid (leucovorin)</b> → dramatic ↓seizures + improvement if started early</td><td>CSF: <b>low 5-MTHF with normal serum/RBC folate</b> (diagnostic dissociation); treatable cause of refractory infantile seizures</td><td class="src"><span class="src-q">Qbank Q69</span></td></tr>
+
+    <!-- ===================== UREA CYCLE ===================== -->
+    <tr><td>Ornithine Transcarbamylase Deficiency (OTC)</td><td>Urea cycle disorder</td><td>Ornithine transcarbamylase (OTC); <b>X-linked</b> (most common UCD)</td><td>Protein load, illness, hyperalimentation, catabolic stress, postpartum</td><td>Males: neonatal hyperammonemic crisis (day 2–5) — lethargy, vomiting, respiratory alkalosis → coma. Females: variable (lyonization). <b>Low citrulline + massive orotic aciduria; ↑glutamine</b></td><td>No</td><td>Death if untreated; developmental delay with neonatal onset; postpartum coma risk in carriers</td><td>Protein restriction; nitrogen scavengers (Na benzoate, Na phenylbutyrate, Ravicti); citrulline/arginine; <b>liver transplant curative for severe</b></td><td><b>Orotic aciduria distinguishes OTC from CPS1</b> (both low citrulline; only OTC ↑orotic). Gene sequencing best (labs only abnormal during crisis)</td><td class="src"><span class="src-q">Qbank Q9, Q12, Q13, Q25, Q71, Q91</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Citrullinemia Type I and II</td><td>Urea cycle disorder</td><td>Argininosuccinate synthetase (type I); type II = citrin (SLC25A13); AR</td><td class="gap">[not in source]</td><td>Severe neonatal hyperammonemic crisis; <b>markedly elevated citrulline with normal urine organic acids</b>; normal pH or mild alkalosis early (not acidosis)</td><td>No</td><td class="gap">[not in source]</td><td>Type II (citrin) low protein ± citrulline. General UCD Rx: low protein, nitrogen scavengers, arg/cit</td><td><b>Elevated (not absent) citrulline</b> distinguishes from OTC/CPS; ↑citrulline + normal UOA = UCD pattern</td><td class="src"><span class="src-q">Qbank Q9, Q13, Q17, Q25</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Argininosuccinic Aciduria (ASA)</td><td>Urea cycle disorder</td><td>Argininosuccinate lyase; AR</td><td class="gap">[not in source]</td><td class="gap">[not in source — listed as a UCD]</td><td>No</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>AR (distractor eliminated when different fathers rule out AR in OTC pedigree)</td><td class="src"><span class="src-q">Qbank Q12</span></td></tr>
+    <tr><td>Arginase Deficiency (ARG1)</td><td>Urea cycle disorder</td><td>Arginase (ARG1); AR</td><td class="gap">[not in source]</td><td><b>Does NOT present with newborn crises</b>; later progressive neuro: <b>spastic paraplegia + ID</b>; episodes of mild hyperammonemia</td><td>No</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>The UCD that presents LATE with progressive neuro + mild (not severe) hyperammonemia, unlike neonatal-crisis UCDs</td><td class="src"><span class="src-q">Qbank Q12, Q13</span></td></tr>
+    <tr><td>Carbamylphosphate Synthetase Deficiency (CPS1)</td><td>Urea cycle disorder</td><td>Carbamyl phosphate synthetase I (CPS1); AR</td><td class="gap">[not in source]</td><td>Hyperammonemia; <b>low citrulline but NO orotic acid elevation</b> (no carbamyl phosphate made → none shunted to pyrimidine pathway)</td><td>No</td><td class="gap">[not in source]</td><td>General UCD Rx: low protein, nitrogen scavengers, arg/cit</td><td><b>Both OTC and CPS have low citrulline; absence of orotic aciduria → CPS</b>. AR (vs X-linked OTC)</td><td class="src"><span class="src-q">Qbank Q12</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>N-acetylglutamate Synthase Deficiency (NAGS)</td><td>Urea cycle disorder</td><td>N-acetylglutamate synthase; AR</td><td class="gap">[not in source]</td><td>Hyperammonemia; NAG (obligate CPS1 cofactor) not made. <b>Carglumic acid directly activates CPS1</b></td><td>No</td><td class="gap">[not in source]</td><td><b>Carglumic acid (Carbaglu)</b> — synthetic NAG analog/cofactor for CPS1; also off-label in PA/MMA/IVA</td><td>Carglumic acid was designed for NAGS deficiency (synthetic obligate cofactor for CPS1). AR</td><td class="src"><span class="src-q">Qbank Q12, Q14</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>HHH Syndrome</td><td>Urea cycle / ornithine transporter</td><td>Ornithine transporter ORNT1 (SLC25A15); AR</td><td class="gap">[not in source]</td><td><b>Triad: Hyperornithinemia, Hyperammonemia, Homocitrullinuria</b>; episodic ↑NH₃. Shares hyperornithinemia with gyrate atrophy (but HHH has ↑NH₃, no retinal degeneration)</td><td>No</td><td class="gap">[not in source]</td><td>Low protein diet ± citrulline</td><td>Dx by homocitrulline; <b>hyperornithinemia shared with gyrate atrophy (OAT)</b>; hyperammonemia in HHH but NOT gyrate atrophy</td><td class="src"><span class="src-q">Qbank Q82</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+
+    <!-- ===================== FATTY ACID OXIDATION + PORPHYRIA ===================== -->
+    <tr><td>MCAD Deficiency</td><td>Fatty acid oxidation (medium-chain)</td><td>ACADM; AR (most common FAO, ~1/10–15,000)</td><td>Fasting, gastroenteritis, poor po intake, viral illness</td><td><b>Hypoketotic hypoglycemia</b>; can resemble Reye syndrome or SIDS (~5% of SIDS); almost never presents in first week</td><td>No</td><td>Lethal hypoketotic hypoglycemia; first crisis fatal in ~25% before NBS</td><td>Avoid fasting; ± carnitine; IV glucose for crisis; parent education on poor feeding/lethargy</td><td><b>Acylcarnitine ↑C6, C8 and ↑C8/C10 ratio</b> (suberylglycine on UOA)</td><td class="src"><span class="src-q">Qbank Q11, Q25, Q33, Q54, Q88</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>VLCAD Deficiency</td><td>Fatty acid oxidation (very long-chain)</td><td>ACADVL; AR</td><td>Fasting, illness (poor feeding, vomiting, lethargy), weight loss</td><td>Symptomatic FAO; can cause <b>SIDS</b>; cardiac involvement (cardiomyopathy, arrhythmias); long-chain fats are preferred cardiac/muscle substrate</td><td>No</td><td>Can cause SIDS; symptomatic infant needs immediate Rx</td><td>Per ACT sheet: evaluate, repeat NBS, <b>IV glucose</b> (even mild illness); avoid fasting; low long-chain fat ± MCT; carnitine</td><td><b>↑C14:1 and ↑C14:1/C12:1 ratio</b> (also ↑C14:2); confirm with ACADVL variants</td><td class="src"><span class="src-q">Qbank Q11, Q46</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>LCHAD & Trifunctional Protein (TFP) Deficiency</td><td>Fatty acid oxidation (long-chain)</td><td>HADHA/HADHB; AR</td><td>Fasting / illness</td><td>FAO features (liver, cardiac, skeletal muscle); <b>maternal HELLP / AFLP risk</b> when carrying an LCHAD fetus</td><td class="gap">[not in source — maternal HELLP involves hemolysis, not the patient]</td><td class="gap">[not in source]</td><td>Avoid fasting; low long-chain fat ± MCT (Lipistart/Monogen); carnitine</td><td><b>↑C14-OH, C16-OH, C18-OH, C18:1-OH</b> (long-chain hydroxy acylcarnitines)</td><td class="src"><span class="src-q">Qbank Q11</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>SCAD Deficiency</td><td>Fatty acid oxidation (short-chain)</td><td>ACADS; AR</td><td>Fasting / illness</td><td>Short-chain FAO defect; clinical significance variable</td><td>No</td><td class="gap">[not in source]</td><td>Avoid fasting; carnitine (FAO general)</td><td><b>↑C4 acylcarnitine</b> (short-chain; C3 instead = propionic acidemia)</td><td class="src"><span class="src-q">Qbank Q11</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Acute Intermittent Porphyria (AIP)</td><td>Porphyria (hepatic; heme biosynthesis)</td><td>HMBS / PBG deaminase; <b>AD</b>, low penetrance (~10%)</td><td>After puberty; P450-inducing drugs (phenytoin, sulfa, barbiturates, carbamazepine, alcohol), fasting, hormones</td><td>Neurovisceral attacks: severe abdominal pain, neuropsychiatric sx, autonomic dysfunction, motor neuropathy; <b>NO photosensitivity</b></td><td>No</td><td class="gap">[not in source]</td><td>High-CHO diet; IV glucose; <b>IV hemin/hematin (Panhematin)</b> for attacks; avoid offending drugs</td><td><b>↑urine porphobilinogen (PBG) + 5-ALA during episodes</b>; spot urine PBG = best screen during attack</td><td class="src"><span class="src-q">Qbank Q66</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Porphyria Cutanea Tarda (PCT)</td><td>Porphyria (hepatic; heme biosynthesis)</td><td>UROD (uroporphyrinogen decarboxylase); some AD, most acquired</td><td>Alcohol, estrogen, iron overload, hepatitis C, HIV</td><td>Adult; <b>photosensitive blistering on sun-exposed skin</b>, hypertrichosis, hyperpigmentation; liver disease/cirrhosis (~40%); cutaneous only, no neurovisceral crises</td><td>No</td><td class="gap">[not in source]</td><td>Avoid triggers; phlebotomy (↓iron); hydroxychloroquine</td><td><b>↑urine uroporphyrin + stool isocoproporphyrin (diagnostic)</b>; hepatic porphyria — urine/stool, not RBCs</td><td class="src"><span class="src-q">Qbank Q75</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+
+    <!-- ===================== LYSOSOMAL — MPS / MUCOLIPIDOSES ===================== -->
+    <tr><td>Hurler Syndrome (MPS I)</td><td>Lysosomal — MPS</td><td>α-L-iduronidase deficiency (IDUA); AR</td><td class="gap">[not in source]</td><td><b>Coarse facies, corneal clouding</b>, dysostosis multiplex, hepatomegaly, macrocephaly/ID, regression; onset 6–12 mo; milder no-CNS variant = Scheie (MPS IS)</td><td>No</td><td>Severe — untreated death by 5–10 yrs</td><td>Early HLA-matched HSCT / cord blood best (improves somatic, not CNS); ERT does not cross BBB</td><td>Dx: enzyme assay, <b>urine GAGs</b>, non-reducing ends, DNA. Enzyme α-L-iduronidase / gene IDUA</td><td class="src"><span class="src-q">Qbank Q22, Q39, Q40, Q65, Q84</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Hunter Syndrome (MPS II)</td><td>Lysosomal — MPS</td><td>Iduronate-2-sulfatase (IDS); <b>X-linked recessive</b> (mostly males)</td><td class="gap">[not in source]</td><td>Coarse facies, developmental delay, hepatomegaly, dysostosis multiplex like Hurler, hearing loss/deafness, but <b>NO corneal clouding</b></td><td>No</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>X-linked MPS in a boy with somatic features + hearing loss + <b>clear corneas</b> → Hunter (vs Hurler corneal clouding)</td><td class="src"><span class="src-q">Qbank Q39, Q65</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Sanfilippo Syndrome (MPS III)</td><td>Lysosomal — MPS</td><td>4 distinct loci (A & B most common); AR</td><td class="gap">[not in source]</td><td><b>Primarily CNS/behavioral</b>, minimal somatic; onset 2–4 yrs; diarrhea, insomnia, seizures, aggression; severe cognitive decline</td><td>No</td><td class="gap">[not in source]</td><td>No benefit from HSCT/ERT; gene therapy (MPS IIIA) pending FDA</td><td>Behavioral/neurologic predominant with minimal somatic findings; dx enzyme assay, urine GAGs, DNA</td><td class="src"><span class="src-q">Qbank Q39</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Maroteaux-Lamy Syndrome (MPS VI)</td><td>Lysosomal — MPS</td><td>Arylsulfatase B deficiency; <span class="gap">[inheritance not in source]</span></td><td class="gap">[not in source]</td><td>Somatic sx may be as severe as Hurler; corneal clouding; <b>intellect usually normal (IQ preserved)</b></td><td>No</td><td class="gap">[not in source]</td><td>ERT (Naglazyme / galsulfase)</td><td>MPS with <b>preserved cognition</b> (also normal in Morquio IVA and Scheie)</td><td class="src"><span class="src-q">Qbank Q39</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Sly Disease (MPS VII)</td><td>Lysosomal — MPS</td><td>β-glucuronidase deficiency; <span class="gap">[inheritance not in source]</span></td><td class="gap">[not in source]</td><td>Severe infantile form like Hurler; <b>prenatal form with hydrops fetalis / fetal ascites</b>; often cognitive impairment</td><td>No</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>MPS presenting as nonimmune hydrops fetalis = Sly; β-glucuronidase defect</td><td class="src"><span class="src-q">Qbank Q39, Q40</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>I-Cell Disease (Mucolipidosis II)</td><td>Mucolipidosis (lysosomal trafficking)</td><td>GlcNAc-1-phosphotransferase defect (Golgi; defective mannose-6-P targeting); AR</td><td class="gap">[not in source]</td><td>Like <b>severe Hurler</b>: coarse facies, hepatomegaly, dysostosis multiplex (vertebral beaking, J-shaped sella); neonatal/prenatal onset</td><td>No</td><td>Severe — earlier/more severe than its milder allelic variant (ML III)</td><td class="gap">[not in source]</td><td>Dx: <b>multiple lysosomal enzymes ELEVATED in plasma</b> with deficient activity in fibroblasts (enzymes secreted not targeted); MPS spot negative</td><td class="src"><span class="src-q">Qbank Q40</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Pseudo-Hurler Polydystrophy (Mucolipidosis III)</td><td>Mucolipidosis (lysosomal trafficking)</td><td>Allelic to I-cell — same phosphotransferase/M6P targeting defect; AR</td><td class="gap">[not in source]</td><td>Like I-cell but <b>milder, later onset</b>; multiple lysosomal enzymes elevated in blood</td><td>No</td><td>Milder than I-cell (allelic, less severe)</td><td class="gap">[not in source]</td><td>Allelic with I-cell (ML II); ML III = milder/later-onset; multiple plasma lysosomal enzymes elevated</td><td class="src"><span class="src-q">Qbank Q40</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Pycnodysostosis</td><td>Lysosomal storage (skeletal dysplasia)</td><td><b>Cathepsin K</b> deficiency (CTSK); AR</td><td class="gap">[not in source]</td><td>Osteoclast dysfunction → dense but fragile bones; short stature, frontal/parietal bossing, open fontanelles, <b>acro-osteolysis of distal phalanges</b>, fragility fractures, micrognathia (Toulouse-Lautrec)</td><td>No</td><td class="gap">[intelligence & life expectancy normal]</td><td>Intelligence & life expectancy normal; <span class="gap">[specific Rx not in source]</span></td><td>Skeletal dysplasia that is actually a <b>lysosomal storage disease</b>; Cathepsin K needed for osteoclast resorption</td><td class="src"><span class="src-q">Qbank Q73</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+
+    <!-- ===================== LYSOSOMAL — SPHINGOLIPIDOSES + MITOCHONDRIAL ===================== -->
+    <tr><td>Fabry Disease</td><td>Lysosomal — sphingolipidosis</td><td><b>α-galactosidase</b> deficiency (GLA); <b>X-linked</b></td><td class="gap">[not in source]</td><td>Males (~9 yr): acroparesthesias, <b>angiokeratomas</b>, corneal opacities, late renal failure & CV/lung disease; CNS spared. Females (~13 yr): fatigue, stroke, proteinuria</td><td class="gap">[not in source]</td><td>Males develop renal failure ~age 30 untreated; ~5% of cryptogenic strokes</td><td class="gap">[not in source]</td><td>X-linked but most female carriers symptomatic; unexplained stroke + proteinuria + male relative on dialysis; enzyme in males, DNA best for females</td><td class="src"><span class="src-q">Qbank Q22, Q78, Q85, Q86</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Gaucher Disease</td><td>Lysosomal — sphingolipidosis</td><td><b>β-glucocerebrosidase</b> deficiency (GBA1, chr 1; nearby pseudogene); AR</td><td class="gap">[not in source]</td><td>Type 1 (~94%, non-neuronopathic): hepatosplenomegaly, bone disease (Erlenmeyer flask, AVN femoral head), cytopenias, no CNS. Type 2 acute neuronopathic (death 2–4 yr); Type 3 (horizontal supranuclear gaze palsy)</td><td class="gap">[not in source]</td><td>Type 1 near-normal with ERT; Type 2 death by 2–4 yr</td><td>ERT or eliglustat (substrate reduction) for non-neuronopathic</td><td>Biomarker <b>glucosylsphingosine (LysoGb1)</b>; "foam cells" in marrow; GBA1 carriers ↑ Parkinson risk</td><td class="src"><span class="src-q">Qbank Q22, Q48</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Krabbe Disease (Globoid Cell Leukodystrophy)</td><td>Lysosomal — sphingolipidosis</td><td><b>Galactosylceramidase</b> deficiency (GALC); AR</td><td class="gap">[not in source]</td><td>Infantile (<6 mo): hypotonia, irritability, optic atrophy, occ. macrocephaly, elevated CSF protein, leukodystrophy on MRI</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>HSCT has some efficacy in later-onset or very early cases</td><td><b>Psychosine</b> biomarker; pseudodeficiency complicates prenatal dx; distinguished from X-ALD (VLCFA)</td><td class="src"><span class="src-q">Qbank Q22, Q28</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Metachromatic Leukodystrophy (MLD)</td><td>Lysosomal — sphingolipidosis</td><td><b>Arylsulfatase A</b> deficiency (ARSA); AR</td><td class="gap">[not in source]</td><td>Late infantile (12–30 mo, most common): motor regression, gait disturbance → spasticity, optic atrophy, language loss; juvenile & adult (psychiatric, mimics schizophrenia); ↑CSF protein, neuropathy</td><td class="gap">[not in source]</td><td>Late infantile death age 5–8; juvenile survival 10–20 yr</td><td>HSCT can stabilize presymptomatic / very early symptomatic patients</td><td><b>Urine sulfatides</b>; MRI 'tigroid' white matter; <b>pseudodeficiency</b> complicates testing — use molecular or sulfatide-loading assay</td><td class="src"><span class="src-q">Qbank Q40, Q56</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Tay-Sachs Disease (GM2 Gangliosidosis)</td><td>Lysosomal — sphingolipidosis</td><td><b>Hexosaminidase A</b> deficiency (HEXA); AR (Hex B defect → Sandhoff)</td><td class="gap">[not in source]</td><td>Infantile (6–12 mo): loss of milestones, hyperacusis (startle), <b>cherry-red macular spot</b>, later seizures, blindness, spasticity</td><td class="gap">[not in source]</td><td>Vegetative by age 2; death by 2–5; no effective treatment</td><td>No treatment</td><td><b>Cherry-red spot</b> + startle + regression = Tay-Sachs; Ashkenazi (~1/30) & French Canadian; enzyme assay preferred for carrier screen; serum HexA inaccurate in pregnancy (use WBC)</td><td class="src"><span class="src-q">Qbank Q7, Q67</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Sialidosis (Sialidase / Neuraminidase Deficiency)</td><td>Lysosomal — glycoprotein (mucolipidosis I)</td><td><b>Sialidase (NEU1)</b> deficiency; AR</td><td class="gap">[not in source]</td><td>Type I (teens–20s): progressive myoclonus, ataxia, <b>cherry-red spot</b>, intellect preserved. Type II (infantile): hydrops fetalis, hepatosplenomegaly, dysostosis multiplex, coarse facies, ID</td><td class="gap">[not in source]</td><td>Type II death in childhood (respiratory/cardiac)</td><td class="gap">[not in source]</td><td>Common LSD cause of <b>non-immune fetal hydrops</b>; urine oligosaccharides (sialyl) as screen; sialidase assay confirms; MPS spot negative</td><td class="src"><span class="src-q">Qbank Q90</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Leigh Syndrome (Subacute Necrotizing Encephalomyelopathy)</td><td>Mitochondrial</td><td>Heterogeneous (>75 genes); nuclear OXPHOS (AR, e.g. SURF1) or mtDNA <b>m.8993T>G (MT-ATP6)</b>, maternal</td><td>Triggered/exacerbated by intercurrent illness (decompensation)</td><td>Onset 3–12 mo: psychomotor regression, hypotonia, feeding difficulty, seizures, breathing irregularity; brainstem dysfunction; <b>↑lactate blood & CSF (CSF≫blood)</b>, ↑lactate/pyruvate</td><td class="gap">[not in source]</td><td>Most die by 3–5 yr (respiratory failure); SURF1 survive longer</td><td class="gap">[not in source]</td><td>MRI: <b>symmetric bilateral T2 hyperintensities in basal ganglia & brainstem</b>; most common pediatric mito disease; PDH variant (PDHA1) X-linked</td><td class="src"><span class="src-q">Qbank Q15, Q18, Q29, Q81, Q83</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+
+    <!-- ===================== PEROXISOMAL + CDG + STEROL/CREATINE + LEUKODYSTROPHY ===================== -->
+    <tr><td>Zellweger Syndrome</td><td>Peroxisomal (biogenesis disorder)</td><td>PEX genes (50% PEX1); AR</td><td class="gap">[not in source]</td><td>Severe hypotonia, seizures, ID, dysmorphic facies (high forehead, flat face), large fontanelle, hepatomegaly, renal cysts, ~50% stippled epiphyses, neuronal heterotopias, cataracts/glaucoma</td><td class="gap">[not in source]</td><td>Most die within 6–12 months (respiratory/hepatic)</td><td class="gap">[not in source]</td><td>Best screen = <b>plasma VLCFA</b> (↑); also ↑phytanic & pipecolic acid; no peroxisomes on EM; most severe of spectrum (Zellweger > NALD > infantile Refsum)</td><td class="src"><span class="src-q">Qbank Q4, Q3</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Refsum Disease</td><td>Peroxisomal (single enzyme)</td><td>PHYH (phytanoyl-CoA hydroxylase; phytanic acid α-oxidation); AR</td><td>Dietary phytanic acid (dairy fat, ruminant meat, some fish)</td><td>Classic tetrad: <b>retinitis pigmentosa</b> (night blindness earliest), peripheral polyneuropathy, cerebellar ataxia, ↑CSF protein; also ichthyosis, anosmia, cardiomyopathy</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Phytanic-acid-restricted diet; plasmapheresis for acute exacerbations</td><td>Dx = elevated <b>phytanic acid</b> (VLCFA & plasmalogens normal); distinct from infantile Refsum (Zellweger spectrum)</td><td class="src"><span class="src-q">Qbank Q2</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Rhizomelic Chondrodysplasia Punctata (RCDP)</td><td>Peroxisomal (biogenesis; plasmalogen defect)</td><td>PEX7 (PTS2 receptor), type 1 most common; AR</td><td class="gap">[not in source]</td><td><b>Rhizomelic (proximal) limb shortening</b>, punctate epiphyseal stippling, coronal vertebral clefts, congenital cataracts (72%), flat facial profile, severe ID, seizures, ichthyosis</td><td class="gap">[not in source]</td><td>Most die within 2 years (severe form)</td><td class="gap">[not in source]</td><td>Dx = <b>low RBC plasmalogens</b> + ↑phytanic acid with <b>NORMAL VLCFA</b> & normal peroxisome number (distinguishes from Zellweger)</td><td class="src"><span class="src-q">Qbank Q61, Q93</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>X-linked Adrenoleukodystrophy (X-ALD)</td><td>Peroxisomal (transporter defect)</td><td>ABCD1 (peroxisomal membrane ABC transporter, ALDP) for VLCFA; <b>X-linked</b>; no genotype-phenotype correlation</td><td class="gap">[not in source]</td><td>Childhood cerebral: declining school performance, behavior change, parieto-occipital demyelination; AMN (20s–40s): spastic paraparesis; <b>primary adrenal insufficiency (~80%)</b>, hyperpigmentation</td><td class="gap">[not in source]</td><td>Cerebral form → vegetative within 2–3 yr; worst prognosis</td><td>Early HSCT (cerebral form, only if early); steroids for adrenal insufficiency; gene therapy approved; Lorenzo's oil does NOT treat established disease</td><td>Dx = ↑plasma <b>VLCFA</b> (C26:0/C22:0); gene defect is a membrane transporter, NOT the FAO enzyme; NBS in many states</td><td class="src"><span class="src-q">Qbank Q5</span> <span class="src-lec">+ Lecture: Biochem II</span> <span class="src-lec">+ OCR: peroxisomal scan</span></td></tr>
+    <tr><td>Peroxisomal Disorders (general)</td><td>Peroxisomal</td><td>PBDs (Zellweger spectrum, RCDP) + single-enzyme defects (X-ALD, Refsum); inheritance per subtype</td><td class="gap">[not in source]</td><td>FTT, developmental delay, hypotonia, cerebral atrophy, ↓myelination, neuronal heterotopias, cataracts/glaucoma/RP, chondrodysplasia punctata, hepatomegaly, renal cysts</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>VLCFA (>C22) β-oxidize in <b>peroxisomes</b> (end product H₂O₂), not mitochondria; <b>↑VLCFA</b> is the key screen for most peroxisomal disorders</td><td class="src"><span class="src-q">Qbank Q3</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Congenital Disorders of Glycosylation (CDG)</td><td>CDG (N-/O-linked glycosylation)</td><td>>140 defects; PMM2 (PMM2-CDG/Ia, most common 60–70%); MPI (MPI-CDG/Ib); AR</td><td class="gap">[not in source]</td><td>PMM2-CDG: FTT, hypotonia, ID, seizures, cerebellar hypoplasia, strabismus, <b>inverted nipples, abnormal fat pads</b>, coagulopathy (↓AT-III, protein C/S → thrombosis), stroke-like episodes. MPI-CDG: hepatic/GI, protein-losing enteropathy</td><td class="gap">[not in source]</td><td>Mortality ~20% early (liver/cardiac); survivors stable moderate-severe ID</td><td>Most supportive; <b>MPI-CDG (Ib) only form with specific Rx = oral mannose</b></td><td>Dx = <b>serum transferrin isoelectric focusing</b> / N-glycan profile; false + in infants <30d, galactosemia, HFI, alcohol, liver disease</td><td class="src"><span class="src-q">Qbank Q49, Q62, Q64</span> <span class="src-lec">+ Lecture: Biochem II</span></td></tr>
+    <tr><td>Smith-Lemli-Opitz Syndrome</td><td>Cholesterol synthesis defect (sterol)</td><td>DHCR7 (7-dehydrocholesterol reductase; chr 11q13.4); AR</td><td class="gap">[not in source]</td><td>ID/autism, microcephaly, hypotonia, FTT, <b>2-3 toe syndactyly</b>, cataracts, hypogenitalism, cleft palate; affected fetus → <b>low maternal serum estriol (uE3)</b></td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Cholesterol supplementation may improve growth & behavior; no effect on development</td><td>Dx = low cholesterol + elevated <b>7-dehydrocholesterol</b>; only IEM causing low maternal uE3 on quad screen; CMA normal</td><td class="src"><span class="src-q">Qbank Q63</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Creatine Transporter Deficiency</td><td>Creatine metabolism</td><td>SLC6A8 (creatine transporter); <b>X-linked</b> (~1% of X-linked ID)</td><td class="gap">[not in source]</td><td>ID, seizures, hypotonia, autistic features (most common creatine deficiency syndrome)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Creatine supplementation does NOT help (unlike GAMT/AGAT); ± Cr + arginine + glycine (lecture)</td><td>Dx = sequence <b>SLC6A8</b>; ↑urine guanidinoacetate, absent/low creatine peak on brain <b>MRS</b>; plasma Cr/creatinine ratio elevated only in AGAT/GAMT</td><td class="src"><span class="src-q">Qbank Q52</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+    <tr><td>Canavan Disease</td><td>Leukodystrophy (organic aciduria)</td><td>ASPA (aspartoacylase; CNS only); AR; ↑ Ashkenazi (~1/40, E285A 84% of Jewish alleles)</td><td class="gap">[not in source]</td><td>Onset 3–5 mo; <b>macrocephaly</b>, hypotonia, progressive leukodystrophy on MRI, seizures, later optic atrophy</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>No treatment (Phase II gene therapy trial)</td><td>Best screen = <b>urine organic acids ↑ N-acetylaspartic acid (NAA)</b>; ↑NAA peak on MRS; gene sequencing definitive</td><td class="src"><span class="src-q">Qbank Q74</span> <span class="src-lec">+ Lecture: Biochem I</span></td></tr>
+
+    <!-- ===================== OTHER GENETICS IN THE BIOCHEM QUIZ (non-IEM) ===================== -->
+    <tr><td>Pendred Syndrome</td><td>Syndromic deafness (NBS ddx)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td><b>Congenital sensorineural hearing loss</b>; euthyroid goiter in adolescence; does NOT raise 17OHP or cause congenital hypothyroidism</td><td>No</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Deafness in newborn but normal 17OHP & thyroid screen distinguishes from CAH/congenital hypothyroidism</td><td class="src"><span class="src-q">Qbank Q6, Q41</span></td></tr>
+    <tr><td>Congenital Adrenal Hyperplasia (CAH)</td><td>Endocrine (NBS)</td><td>CYP21A2; <b>21-hydroxylase deficiency</b> (~95%); AR</td><td class="gap">[not in source]</td><td>21-OHase blocks cortisol → <b>↑17-hydroxyprogesterone (17OHP)</b> on NBS; ↑ACTH; salt-wasting risk</td><td>No</td><td>Potentially life-threatening; ↑17OHP on NBS is an emergency</td><td class="gap">[not in source]</td><td>Elevated 17OHP on NBS = CAH (only listed disorder raising 17OHP); NBS emergency</td><td class="src"><span class="src-q">Qbank Q6, Q57</span></td></tr>
+    <tr><td>Cystic Fibrosis</td><td>CFTR (NBS)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Can present with <b>diarrhea</b> but not usually poor feeding/emesis/hepatomegaly; NBS via <b>elevated</b> Immunoreactive Trypsinogen (IRT)</td><td>No</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Decreased IRT does NOT indicate CF (must be elevated); GI-only diarrhea ≠ galactosemia</td><td class="src"><span class="src-q">Qbank Q33, Q41</span></td></tr>
+    <tr><td>Sickle Cell Anemia</td><td>Hemoglobinopathy (NBS)</td><td><b>HbS (Glu6Val)</b>; AR</td><td>Hypoxia, dehydration, acidosis, cold</td><td>Protected by HbF until ~6 mo → <b>dactylitis (first sign)</b> → splenic sequestration → functional asplenia by age 5; vaso-occlusive crises</td><td class="tag-yes">Yes — hemolysis from polymerized HbS</td><td>Pneumococcal sepsis risk; death from acute chest syndrome (adults), infection (children)</td><td><b>Penicillin prophylaxis by 2 mo to age 5</b>; hydroxyurea ↑HbF; voxelotor, crizanlizumab; HSCT/gene therapy curative</td><td>NBS reduces M&M via early prophylactic penicillin — the key NBS rationale</td><td class="src"><span class="src-q">Qbank Q95</span></td></tr>
+    <tr><td>Beta-thalassemia</td><td>Hemoglobinopathy</td><td>Beta-globin gene (↓ β-chains)</td><td class="gap">[not in source]</td><td>Carrier electrophoresis: <b>↓HbA, ↑HbA2, ↑HbF</b>, no HbS; major presents 6–12 mo as HbF declines → severe anemia, FTT, hepatosplenomegaly, frontal bossing</td><td class="gap">[not in source]</td><td>Major needs chronic transfusion → iron overload; <b>cardiac iron = leading cause of death</b></td><td>Chronic transfusion; iron chelation after ~10–20 transfusions (ferritin >1000)</td><td>↓HbA + ↑HbA2 + ↑HbF + no HbS = beta-thal carrier</td><td class="src"><span class="src-q">Qbank Q51</span></td></tr>
+    <tr><td>Fanconi Syndrome (renal)</td><td>Renal tubular</td><td class="gap">[not in source]</td><td>Causes: myeloma (light chains), cisplatin, tenofovir, Wilson disease, cystinosis (children)</td><td><b>Proximal tubular dysfunction</b>: urinary loss of glucose, AAs, phosphate, bicarbonate, uric acid; type 2 RTA, rickets, hypokalemia</td><td>No</td><td class="gap">[not in source]</td><td>Treat underlying cause + supplement phosphate & bicarbonate</td><td><b>Glucosuria with NORMAL blood glucose + non-anion-gap acidosis + hypophosphatemia</b> = Fanconi</td><td class="src"><span class="src-q">Qbank Q53</span></td></tr>
+    <tr><td>HELLP Syndrome</td><td>Obstetric / metabolic</td><td class="gap">[not in source]</td><td>Fetus with <b>LCHAD deficiency</b> (NBS ↑C16-OH) ↑ maternal HELLP risk; severe preeclampsia</td><td><b>H</b>emolysis, <b>E</b>levated <b>L</b>iver enzymes, <b>L</b>ow <b>P</b>latelets; 3rd trimester/early postpartum; MAHA (schistocytes), ↑AST/ALT, plt <100k</td><td class="tag-yes">Yes — microangiopathic hemolytic anemia</td><td class="gap">[not in source]</td><td>Delivery is definitive treatment</td><td>Pregnant/postpartum + MAHA + ↑AST/ALT + plt <100k = HELLP; mother of LCHAD fetus at risk</td><td class="src"><span class="src-q">Qbank Q80</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Genetics Qbank question #</span>; <span class="src src-lec">purple = OCR'd Biochem I/II lecture (or peroxisomal OCR scan)</span>; <span class="src src-none">orange = in neither source</span>. <span class="gap">[bracketed grey]</span> = source silent (left blank, not filled from training knowledge). Statistics-only questions (Q30, Q35, Q47 — PPV/sensitivity calcs) were excluded as they test no disorder.</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity:</b> type several words — every word must match somewhere in a row (AND). With <i>Proximity ranking</i> on, rows where your words sit close together float to the top.<br>
+  • <b>Fuzzy:</b> tolerates typos via edit-distance (e.g. <i>"galactoze"→galactosemia</i>, <i>"orotic"→orotic</i>, <i>"sphingo"→sphingolipidosis</i>).<br>
+  • Click a column header to sort ↑↓ · click a row to pin-highlight it · matched terms are <mark>highlighted</mark> · click a green category chip to filter by category.<br>
+  • 100% offline — no internet, no libraries. Save anywhere and reopen anytime.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length);
+  let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) {
+    const sub = word.substr(s, term.length);
+    if (!sub) break;
+    best = Math.min(best, editDistance(term, sub));
+    if (best === 0) break;
+  }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText);
+  const positions = [];
+  let total = 0;
+  for (const term of terms) {
+    let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => {
+      const s = termMatchesWord(term, w);
+      if (s > bestScore) { bestScore = s; bestPos = idx; }
+    });
+    if (bestScore === 0) return null;
+    total += bestScore;
+    positions.push(bestPos);
+  }
+  if (proxOn.checked && positions.length > 1) {
+    const spread = Math.max(...positions) - Math.min(...positions);
+    total += Math.max(0, 40 - spread * 4);
+  }
+  return total;
+}
+
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<")
+             .replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => {
+    const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) {
+      for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>";
+    }
+    return tok;
+  }).join("");
+}
+
+function filterTable() {
+  const q = input.value.trim();
+  const terms = tokenize(q);
+  let visible = 0;
+  const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else {
+      row.style.display = ""; visible++;
+      Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms));
+      scored.push({ row, sc });
+    }
+  });
+  if (terms.length && scored.length) {
+    scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row));
+  }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+
+function resetAll() {
+  input.value = "";
+  allRows.forEach(r => tbody.appendChild(r));
+  filterTable();
+  input.focus();
+}
+
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col];
+  sortDir[col] = asc;
+  rows.sort((a, b) => {
+    const x = a.cells[col].textContent.trim().toLowerCase();
+    const y = b.cells[col].textContent.trim().toLowerCase();
+    return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+const catChips = ["Amino acidopathy","Organic acidemia","Urea cycle","Fatty acid","Lysosomal","Peroxisomal","Mitochondrial","CDG","Carbohydrate","Porphyria","Hemoglobinopathy"];
+const termChips = ["cherry red spot","hyperammonemia","sweaty feet","VLCFA","hypoketotic","cornstarch","orotic","fructoze"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip cat"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+termChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+
+tbody.addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (tr) tr.classList.toggle("hit");
+});
+
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
