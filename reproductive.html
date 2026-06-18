@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Reproductive / Prenatal Genetics — Qbank + Lecture Master Table</title>
+<style>
+  :root { --accent:#0d8a7a; --accent-dark:#0a6b5f; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(13,138,122,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#eaf7f4; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#e3f6f2; color:var(--accent-dark); border:1px solid #a9e0d6; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.9em; }
+  th, td { border:1px solid #d4dae0; padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#f3faf8; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.8em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🤰 ABMGG / ACMG Reproductive &amp; Prenatal Genetics — Master Study Table</h2>
+<p class="sub">Concepts from your <b>ACMG Genetics Qbank</b> (47 Reproductive Genetics questions) + the OCR'd <b>Reproductive Genetics lecture</b> (redundant question PDF in Downloads as backup). Source column cites the exact question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "residual risk" · "cfDNA PPV" · "nuchal translucency" · "FMR1 premutation" · "Robertsonian" · "AZFc"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Topic / Test / Concept<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Key Facts &amp; Numbers<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Clinical Use / When<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Board Pearl / Pitfall<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ============ CARRIER SCREENING ============ -->
+    <tr><td>Expanded carrier screening (ACMG tiered)</td><td>Carrier screening</td><td><b>Tier 3 = carrier frequency ≥1/200 OR severe/moderate phenotype → offered to ALL pregnant patients & those planning pregnancy, regardless of ethnicity.</b> Tier 1 = CF + SMA + hemoglobinopathy (historical minimum). Tier 3 panels ≈113 genes. Targeted variant genotyping, not full sequencing, as initial test (Gregg et al. 2021).</td><td>Offer to all patients pregnant or considering pregnancy; pan-ethnic. Concurrent testing if time-limited; sequential (test 1 partner, reflex) cost-efficient preconception.</td><td><b>Ethnicity-based screening was ABANDONED</b> — US admixture makes self-reported ancestry unreliable. Don't revert to CF/SMA/hemoglobinopathy-only.</td><td class="src"><span class="src-q">Repro Q1, Q3</span></td></tr>
+    <tr><td>SMA carrier screening (SMN1)</td><td>Carrier screening</td><td>SMN1 <b>dosage</b> (MLPA/qPCR): <b>1 copy = carrier, 2 copies = normal</b>. Cannot distinguish non-carrier (1+1) from silent <b>"2+0" carrier</b> (both copies cis). Residual risk after 2-copy result is ancestry-specific (e.g. African American ~1/121; Caucasian ~1/834). SMN2 modifies severity, not carrier status.</td><td>Part of Tier 1/Tier 3 universal panel. Always report ancestry-specific residual risk after a normal result.</td><td><b>A normal 2-copy result does NOT exclude carrier status — "2+0" silent carriers are missed</b>, esp. African ancestry. ONE copy = carrier; two = normal.</td><td class="src"><span class="src-q">Repro Q2</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>CFTR carrier screening</td><td>Carrier screening</td><td>Carrier freq ~1/25 (Ashkenazi & N. European) to ~1/94 (Asian). Original <b>23-variant panel</b> captures ~88% Caucasian, ~94% Ashkenazi alleles; expanded NGS >95%. Targeted genotyping, not full sequencing, as initial test.</td><td>Offer to BOTH partners as part of pan-ethnic Tier 3 panel, regardless of ancestry. Concurrent or sequential both acceptable.</td><td><b>Do NOT screen only the higher-frequency ethnic partner</b> — N. European CFTR rate nearly equals Ashkenazi. Residual risk is never zero.</td><td class="src"><span class="src-q">Repro Q1, Q3</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Hemoglobinopathy / thalassemia carrier screening</td><td>Carrier screening</td><td>Start with CBC + iron + Hb electrophoresis. ↑HbA2 (&gt;3.5%) → β-thal trait; <b>normal HbA2 + microcytosis (MCV &lt;80) + normal iron → α-thalassemia trait → HBA1/HBA2 deletion analysis</b>; abnormal peak → structural variant (HbS/C/E). α-thal carriers have NORMAL electrophoresis. Both cis-deletion partners → Hb Bart's hydrops risk 25%.</td><td>Preconception/prenatal. Microcytosis + normal iron + normal electrophoresis → molecular α-globin testing (not empiric iron).</td><td><b>Normal Hb electrophoresis does NOT rule out α-thalassemia trait</b> — molecular deletion testing required.</td><td class="src"><span class="src-q">Repro Q4</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Residual risk after negative carrier screen (Bayesian)</td><td>Carrier screening / risk calc</td><td><b>Residual risk = [(1 − DR) × carrier freq] / [1 − (DR × carrier freq)]</b>. CFTR example: DR 0.88, freq 1/25 → ≈ <b>1/200</b>. A negative screen never gives zero residual risk.</td><td>Counsel after any negative panel; combine both partners' residual risks for couple-risk.</td><td><b>Shortcut: ~1/25 freq + ~90% DR → residual ≈ 1/250.</b> 1/25 = pre-test; 1/2,500 = couple/disease risk; residual is NEVER zero.</td><td class="src"><span class="src-q">Repro Q5</span></td></tr>
+    <tr><td>MTHFR polymorphism testing</td><td>Carrier screening / "do not order"</td><td>2013 ACMG guideline: <b>do NOT order MTHFR c.677C&gt;T / c.1298A&gt;C genotyping for thrombophilia or recurrent pregnancy loss.</b> No clinically meaningful link to VTE/loss once homocysteine controlled. 677TT common (~10-15% Caucasians). If indicated, measure homocysteine, not genotype.</td><td>Essentially never order for thrombophilia / RPL. Measure homocysteine instead if indicated.</td><td><b>Classic ACMG / Choosing Wisely "do not order" — high-yield.</b> 677TT does NOT warrant anticoagulation/aspirin by genotype alone.</td><td class="src"><span class="src-q">Repro Q15</span></td></tr>
+    <tr><td>Prenatal molecular diagnosis of CAH</td><td>Carrier screening / prenatal dx</td><td>Non-classic CAH (CYP21A2, ~20-50% residual activity) patient may be compound het carrying one <b>classic salt-wasting allele</b> + one mild allele. If partner also carries a classic mutation → <b>25% risk of a child with classic salt-wasting CAH</b>.</td><td>Obtain specific allele diagnosis in non-classic CAH patients contemplating pregnancy.</td><td><b>Reason to genotype a non-classic CAH patient is reproductive</b> — identify risk for a child with classic salt-wasting CAH, not to adjust her steroids.</td><td class="src"><span class="src-q">Repro Q34</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+
+    <!-- ============ PRENATAL SCREENING ============ -->
+    <tr><td>cfDNA / NIPT (cell-free fetal DNA)</td><td>Prenatal screening</td><td><b>Screen, not diagnostic.</b> cfDNA is placental (trophoblast) origin. Sensitivity/specificity <b>&gt;98%</b> for T13/18/21 (T21 &gt;99%); FPR &lt;0.1%. Detects common trisomies + sex chromosomes; <b>does NOT detect NTDs</b>. Cleared within hours of delivery (prior pregnancies don't interfere). From ~10 wks.</td><td>Offer to all singleton pregnancies (2020 ACOG/SMFM). Positive → confirm with CVS/amnio. Add serum AFP separately for open NTDs.</td><td><b>A positive cfDNA is a screen, not a diagnosis — always confirm.</b> Negative cfDNA does NOT exclude CNVs, monogenic disorders, or NTDs.</td><td class="src"><span class="src-q">Repro Q7, Q36, Q44</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>cfDNA PPV, FPR &amp; limitations (no-call / fetal fraction)</td><td>Prenatal screening</td><td>PPV is prevalence-dependent: <b>T21 ~80-90%</b> (&gt;97% if &gt;35), T18 ~60-80%, <b>T13 ~40-50% (lowest)</b>, monosomy X ~25-40%. FPR &lt;1% (lowest of all screens). <b>No-call = low fetal fraction (&lt;4%)</b>: ↑maternal BMI, early GA, aneuploidy (T13/18/triploidy/45,X have small placentas), vanishing twin. No-call → ~2-3× ↑ aneuploidy risk.</td><td>Choose when lowest FPR / highest PPV desired. No-call → offer diagnostic testing, NOT reflexive redraw.</td><td><b>Vanishing/demised co-twin is a contraindication.</b> A no-call gives NO screening info — does not exclude aneuploidy.</td><td class="src"><span class="src-q">Repro Q8, Q39, Q40, Q43, Q47</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>First-trimester combined screen</td><td>Prenatal screening</td><td>Weeks <b>11-13 (CRL 45-84 mm)</b>. Analytes: <b>NT + PAPP-A + free β-hCG</b>. T21 detection <b>~80% at &lt;5% screen-positive rate</b>. T21 = ↑NT, ↓PAPP-A, ↑free β-hCG; T18/T13 = ↑NT, ↓PAPP-A, ↓free β-hCG. FPR up to 15% in women &gt;35.</td><td>Population aneuploidy screen in low-risk women. Combine NT with serum to raise PPV.</td><td><b>~80% T21 detection at &lt;5% screen-positive rate</b>; much higher FPR than cfDNA.</td><td class="src"><span class="src-q">Repro Q25, Q26, Q33</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Quad / integrated / 2nd-trimester serum screen</td><td>Prenatal screening</td><td><b>Quad (weeks 15-22): AFP + hCG + uE3 + inhibin A.</b> T21 = ↓AFP, ↑hCG, ↓uE3, ↑inhibin A. T18 = all down. Open NTD = ↑↑AFP. SLO = ↓AFP, ↓hCG, ↓↓uE3. <b>Integrated</b> (1st+2nd held to 2nd) = highest sensitivity, lowest FPR but delayed.</td><td>Aneuploidy screening (largely replaced by cfDNA); <b>serum AFP still essential for open NTD (cfDNA can't detect NTDs)</b>.</td><td><b>T18 quad = everything low.</b> Isolated ↑AFP → open NTD or abdominal wall defect.</td><td class="src"><span class="src-q">Repro Q26, Q39, Q40</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Nuchal translucency (NT)</td><td>Prenatal screening (ultrasound)</td><td>Measured <b>11-14 weeks</b>. <b>Screen, not diagnostic</b> — at modest elevation the most likely karyotype is still normal (euploid base rate dominates). <b>NT ≥3.5 mm (&gt;99th %ile)</b> → ↑risk aneuploidy + structural cardiac defects (~3-5% even if euploid) + Noonan/RASopathies + skeletal dysplasias. Cystic hygroma &gt;90% PPV.</td><td>NT ≥3.5 mm → offer <b>diagnostic testing (CVS/amnio) with CMA</b> regardless of cfDNA + fetal echo; consider Noonan panel/exome.</td><td><b>Most elevated NTs occur in chromosomally normal fetuses.</b> NT ≥3.5 mm triggers diagnostic testing + CMA even if cfDNA negative.</td><td class="src"><span class="src-q">Repro Q25, Q31, Q35</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Ultrasound soft markers &amp; structural anomalies</td><td>Prenatal screening (ultrasound)</td><td>2nd-trimester T21 likelihood ratios: <b>echogenic bowel ~5-7 (highest)</b>, short femur ~1.5-2, pyelectasis &lt;2, echogenic intracardiac focus (EIF) &lt;2. Choroid plexus cyst = marker for <b>T18</b>. Echogenic bowel DDx: T21, CF, CMV, swallowed blood, IUGR. <b>Omphalocele ~30% aneuploidy</b>; gastroschisis = low risk.</td><td>2nd-trimester anatomy survey. <b>Isolated EIF/mild pyelectasis with negative cfDNA → no further action.</b> Omphalocele → diagnostic workup.</td><td><b>Isolated EIF after negative NIPT = normal variant — no amnio/echo/quad.</b> Distinguish omphalocele (↑aneuploidy) from gastroschisis (low risk).</td><td class="src"><span class="src-q">Repro Q41, Q45, Q47</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Maternal obesity &amp; NTD / teratogen risk</td><td>Prenatal screening / teratogenicity</td><td><b>NTD = highest relative-risk anomaly in maternal obesity</b>; BMI &gt;40 up to <b>4× ↑ malformation risk</b>. NTDs are predominantly <b>multifactorial/euploid</b> (folate deficiency, diabetes, obesity, valproate) — most have normal karyotype/CMA.</td><td>Obese gravida → dedicated/repeat anatomy survey; <b>high-dose folic acid 4 mg/day</b> preconception if added NTD risk. NTD + normal cfDNA → amnio likely normal CMA.</td><td><b>cfDNA does NOT detect NTDs.</b> Obesity (not the listed drugs) is the dominant teratogenic NTD risk.</td><td class="src"><span class="src-q">Repro Q42, Q44, Q46</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+
+    <!-- ============ DIAGNOSTIC TESTING + MOSAICISM ============ -->
+    <tr><td>Chorionic villus sampling (CVS)</td><td>Diagnostic testing</td><td>Timing <b>10-13 weeks</b>. Tissue: chorionic villi (placenta). Procedure loss <b>~0.2%</b>. Transabdominal or transcervical. AFP not available (too early). CPM in ~1-2% of samples.</td><td>Early diagnosis for positive cfDNA, ↑a priori risk, or known carrier couples. Used when first-trimester result desired.</td><td><b>Early CVS (&lt;10 wk) → limb reduction defects; transcervical route → hemangiomas.</b> Abruption/previa/preterm are distractors.</td><td class="src"><span class="src-q">Repro Q6, Q29, Q30</span></td></tr>
+    <tr><td>Amniocentesis</td><td>Diagnostic testing</td><td>Timing <b>≥15 weeks</b>. Tissue: amniocytes (fetal). Procedure loss <b>~0.1-0.3%</b>. AFP available. PROM in ~1% post-procedure; fluid reaccumulates in <b>&gt;90%</b> (avg 3 wks) with favorable outcomes.</td><td>2nd-trimester dx: AMA, positive serum screen, structural anomalies, or CVS-mosaicism follow-up.</td><td><b>Post-amnio PROM is favorable</b> (fluid reaccumulates), unlike spontaneous mid-trimester PROM. Amnio clarifies karyotype after CPM on CVS.</td><td class="src"><span class="src-q">Repro Q6, Q9, Q32</span></td></tr>
+    <tr><td>Prenatal chromosomal microarray (CMA)</td><td>Diagnostic testing</td><td><b>First-tier test for fetal structural anomalies</b> (Wapner 2012). Incremental yield over karyotype: anomalies + normal karyotype <b>~6%</b>; AMA/positive screen with normal US ~1-1.7%; works on non-viable tissue (miscarriage/stillbirth). Detects CNVs &lt;5-10 Mb.</td><td>First-tier when US shows structural anomalies; high value when karyotype fails (miscarriage, stillbirth).</td><td><b>Fewest incremental diagnoses = AMA &gt;35</b> (aneuploidy already caught by karyotype). Misses balanced rearrangements, low-level mosaicism, UPD (unless SNP-based); detects VUS.</td><td class="src"><span class="src-q">Repro Q9, Q37</span></td></tr>
+    <tr><td>Prenatal exome sequencing</td><td>Diagnostic testing</td><td>Per <b>ACMG 2020 points-to-consider</b>: offered when karyotype + CMA negative and anomalies persist. <b>Trio (fetus + both parents) preferred.</b> Yield after negative karyotype/CMA: multiple anomalies ~15-30%; skeletal dysplasias ~20-40%; single-system ~5-10%.</td><td>2nd-tier in anomaly-positive, karyotype/CMA-negative pregnancies (e.g. skeletal dysplasia). Multidisciplinary interpretation.</td><td><b>Turnaround time is the critical constraint</b> — rapid exome enables decisions. Pre-test counseling for VUS/secondary findings; trio improves classification.</td><td class="src"><span class="src-q">Repro Q9, Q10</span></td></tr>
+    <tr><td>Confined placental mosaicism (CPM) &amp; UPD</td><td>Mosaicism / UPD</td><td>CPM = abnormal line in placenta only, fetus normal; <b>~1-2% of CVS</b>. Mechanism: trisomic conception → trisomic rescue → if both remaining from same parent = UPD. ~10% trisomy 15 CPM → maternal UPD15; ~10-25% trisomy 16 CPM → maternal UPD16 (IUGR). Imprinted chromosomes: 6,7,11,14,15,16,20.</td><td>Order <b>UPD studies (methylation/SNP)</b> when CVS mosaicism involves an imprinted chromosome, even if amnio is normal diploid.</td><td><b>Trisomy 15 CPM + SGA/hypotonia → test UPD15</b> (maternal UPD15 = Prader-Willi; paternal = Angelman). UPD gives a normal karyotype — needs methylation/SNP. (Note: Q29 states the reverse — flag source discrepancy.)</td><td class="src"><span class="src-q">Repro Q27, Q29, Q6</span></td></tr>
+    <tr><td>Amniocentesis mosaicism (Levels I-III)</td><td>Mosaicism / UPD</td><td>ACMG/ISCN: <b>Level I</b> = single abnormal cell/single colony (pseudomosaicism, no action); <b>Level II</b> = multiple abnormal cells in single colony (uncertain, consider repeat); <b>Level III</b> = multiple abnormal colonies across multiple flasks = <b>likely TRUE fetal mosaicism</b>.</td><td>Level III → detailed US, repeat amnio, fetal blood sampling, placental CVS (CPM vs TFM), postnatal karyotype.</td><td><b>Multiple abnormal colonies across multiple flasks = Level III true mosaicism.</b> % in one tissue poorly predicts other tissues; no termination without confirmatory workup.</td><td class="src"><span class="src-q">Repro Q28</span></td></tr>
+
+    <!-- ============ PGT ============ -->
+    <tr><td>PGT-M (monogenic disorders)</td><td>PGT</td><td>For single-gene disorders. <b>Combines direct mutation analysis + linkage (haplotyping) with flanking STR/SNP markers to mitigate allele dropout (ADO 5-20% in single-cell PCR).</b> Trophectoderm biopsy (day 5/6 blastocyst, 5-10 cells); PGT-A often bundled.</td><td>Couples at risk of transmitting a known single-gene disorder; identify informative markers + reference before IVF.</td><td><b>De novo mutations are a particular challenge</b> — parental phase can't be set via relatives. Direct mutation alone risks ADO misdiagnosis.</td><td class="src"><span class="src-q">Repro Q11</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>PGT-A (aneuploidy; mosaicism)</td><td>PGT</td><td>NGS of 5-10 trophectoderm cells for whole/segmental aneuploidy; <b>can detect mosaicism</b>. Mosaic levels: low ~20-40% (near-euploid outcomes); high ~40-80% (reduced but non-zero live-birth). May reduce miscarriage rate.</td><td>AMA, recurrent implantation failure. Mosaic embryos may be transferred after counseling if no euploid available.</td><td><b>A mosaic PGT-A result ≠ true fetal mosaicism</b> — often artifact/trophectoderm-confined. <b>Offer prenatal confirmation (CVS/amnio) for all mosaic-embryo pregnancies.</b></td><td class="src"><span class="src-q">Repro Q12</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>PGT-SR — reciprocal translocation segregation</td><td>PGT</td><td>Reciprocal carriers produce mixed embryos: <b>Alternate = balanced/normal (transferable); Adjacent-1, Adjacent-2, 3:1 = unbalanced (mostly nonviable; rare e.g. Emanuel syndrome).</b> ~30-50% balanced. Methods: SNP array / NGS.</td><td>Carriers of balanced rearrangements with pregnancy losses; selects balanced/normal embryos.</td><td><b>Standard CNV-based PGT-SR cannot distinguish balanced carrier from normal karyotype</b> — needs karyomapping/haplotyping.</td><td class="src"><span class="src-q">Repro Q13</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>PGT-SR — Robertsonian translocation (empiric risk)</td><td>PGT</td><td>Robertsonian carriers: most trisomy conceptions abort → <b>low liveborn risk. Empiric: rob(13;14) ~1% T13; rob(14;21) ~10-15% T21 maternal, &lt;1-2% paternal; rob(21;21) = 100% T21 or lethal monosomy.</b> Maternal carriers transmit unbalanced at higher rates.</td><td>Counseling/recurrence-risk in Robertsonian carriers; PGT-SR or donor gametes for high-risk.</td><td><b>rob(21;21) is unique — every viable offspring has trisomy 21; PGT-SR or donor gametes strongly advised.</b></td><td class="src"><span class="src-q">Repro Q14</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+    <tr><td>Balanced translocation — reproductive options</td><td>PGT</td><td>For a balanced carrier, options detecting unbalanced products = amnio, CVS, PUBS (karyotype/FISH/CMA) and PGD/PGT-SR (selects balanced/normal embryos preconception). <b>cfDNA/NIPT is NOT appropriate</b> — screens only common aneuploidies + sex chromosomes, misses unbalanced derivatives.</td><td>Reproductive counseling for known balanced-translocation carriers; PGD preferred preconception.</td><td><b>cfDNA/NIPT is a screen for common aneuploidies — not a diagnostic test for unbalanced products of parental rearrangements.</b></td><td class="src"><span class="src-q">Repro Q38</span> <span class="src-lec">+ Lecture: Reproductive Genetics</span></td></tr>
+
+    <!-- ============ INFERTILITY ============ -->
+    <tr><td>Y-chromosome microdeletion (AZF)</td><td>Infertility</td><td>Tested in non-obstructive azoospermia/oligospermia. <b>AZFa or AZFb complete → ~0% TESE retrieval; AZFc → ~50-70% retrieval; AZFbc/abc → ~0%.</b> Genes: USP9Y, DBY, RBMY1. gr/gr partial = risk factor, not deterministic.</td><td>Work-up of non-obstructive azoospermia; AZFc predicts feasible sperm retrieval for ICSI.</td><td><b>AZFc has the best TESE retrieval (~50-70%); complete AZFa/AZFb or combined ≈ 0%.</b></td><td class="src"><span class="src-q">Repro Q16</span></td></tr>
+    <tr><td>Y-microdeletion inheritance / counseling</td><td>Infertility</td><td>Y transmitted whole to all sons. <b>AZFc deletion is obligately transmitted to ALL male offspring → impaired spermatogenesis.</b> Y instability raises offspring risk of 45,X and 45,X/46,XY mosaicism (Turner features/ambiguity).</td><td>Pre-ICSI counseling; consider preimplantation/prenatal karyotype given Y instability.</td><td><b>Not Mendelian 50% — all sons inherit the deletion and are likely infertile.</b></td><td class="src"><span class="src-q">Repro Q17</span></td></tr>
+    <tr><td>CBAVD / CFTR</td><td>Infertility</td><td>Congenital bilateral absence of vas deferens → obstructive azoospermia. <b>~60-80% of CBAVD men carry ≥1 CFTR variant; ~25% compound het (one classic + one mild e.g. 5T).</b> ADGRG2 (X-linked) in CFTR-negative subset. CFTR-negative CBAVD assoc. unilateral renal agenesis → renal ultrasound.</td><td>Comprehensive CFTR analysis (incl. 5T poly-T tract) for patient AND partner + renal ultrasound before ICSI.</td><td><b>CBAVD is a mild CFTR-related disorder; karyotype/Y-microdeletion are NOT the right first test.</b> Always test the partner.</td><td class="src"><span class="src-q">Repro Q18</span></td></tr>
+    <tr><td>CBAVD — 5T allele penetrance &amp; offspring risk</td><td>Infertility</td><td>5T penetrance depends on paired TG length: <b>5T-TG11 mostly asymptomatic; 5T-TG12 CBAVD/mild; 5T-TG13 more penetrant.</b> Offspring classic-CF risk depends on partner genotype (residual carrier risk after negative panel ~1/200).</td><td>Counseling before ICSI when one parent is a CFTR compound het; full partner CFTR sequencing lowers residual risk.</td><td><b>5T is NOT a benign polymorphism — penetrance depends on the TG tract.</b> Risk isn't 50% unless partner also carries a disease variant.</td><td class="src"><span class="src-q">Repro Q19</span></td></tr>
+
+    <!-- ============ PREMATURE OVARIAN INSUFFICIENCY ============ -->
+    <tr><td>Fragile X-associated POI (FMR1 premutation)</td><td>POI</td><td>POI = ≥4 mo amenorrhea + two FSH &gt;25. <b>FMR1 premutation = 55-200 CGG repeats; ~20% of female carriers develop FXPOI (&lt;40 yr); risk peaks ~80-100 repeats. Full mutations (&gt;200) do NOT increase POI risk (methylation silences).</b> First-tier POI workup = karyotype + FMR1 CGG. 2nd-tier: BMP15, FOXL2, NR5A1, STAG3, MCM8/9.</td><td>First-line POI evaluation (e.g. 31-yo, FSH 52, low AMH) → karyotype + FMR1, not exome/CMA first.</td><td><b>Premutation (55-200), not full mutation, confers POI risk.</b> CMA misses FMR1 repeat expansions.</td><td class="src"><span class="src-q">Repro Q20</span></td></tr>
+    <tr><td>FMR1 premutation — transmission / expansion</td><td>POI</td><td><b>Maternal premutations are unstable and may expand to full mutation (&gt;200 CGG); expansion risk rises sharply with allele size</b> (~55-59 CGG ~4% → 100+ ~95-100%). <b>AGG interruptions stabilize the tract.</b> Paternal premutations expand only modestly (sperm selects against full mutation). Phenotypes: premutation male = FXTAS, female = FXPOI.</td><td>Reproductive counseling for premutation-carrier women considering pregnancy.</td><td><b>Maternal (not paternal) transmission drives full-mutation expansion.</b> Premutations are not stably transmitted.</td><td class="src"><span class="src-q">Repro Q21</span></td></tr>
+    <tr><td>Other POI genes (FOXL2/BPES, BMP15)</td><td>POI</td><td><b>FOXL2 → BPES. Type I = eyelid findings + POI; Type II = eyelid findings, normal ovaries.</b> Eyelid triad: blepharophimosis, ptosis, epicanthus inversus. Somatic FOXL2 p.Cys134Trp → adult granulosa cell tumors. BMP15/GDF9 = isolated POI; STAG3 = cohesinopathy; NR5A1 = 46,XY DSD / 46,XX POI.</td><td>Woman with eyelid triad + amenorrhea → FOXL2 testing (BPES type I).</td><td><b>Eyelid malformations + amenorrhea = BPES type I (FOXL2).</b> BMP15/STAG3/GDF9 cause isolated POI without craniofacial findings.</td><td class="src"><span class="src-q">Repro Q22</span></td></tr>
+
+    <!-- ============ RECURRENT PREGNANCY LOSS ============ -->
+    <tr><td>Recurrent pregnancy loss (RPL) — parental karyotype</td><td>Recurrent pregnancy loss</td><td>RPL = ≥2 consecutive losses (ASRM) or ≥3 (ACOG). <b>Parental karyotypes are the highest-yield genetic test — balanced rearrangements in ~2-5% of couples.</b> Workup also: antiphospholipid panel, uterine cavity eval, TSH/prolactin, POC karyotype/CMA. 40-50% have identifiable cause.</td><td>Initial RPL evaluation in a couple with ≥2-3 first-trimester losses; karyotype first to direct PGT-SR vs PGT-A.</td><td><b>Do NOT order MTHFR / routine thrombophilia panels for RPL (except APS).</b> Karyotype both parents.</td><td class="src"><span class="src-q">Repro Q23</span></td></tr>
+    <tr><td>Products of conception (POC) microarray &amp; MCC</td><td>Recurrent pregnancy loss</td><td><b>~50% of first-trimester losses are aneuploid.</b> Culture-based POC karyotype grows maternal decidual cells → <b>maternal cell contamination (MCC) 20-50%, overcalling "46,XX".</b> Preferred = SNP-based CMA on POC: no culture, detects CNVs/triploidy/UPD + identifies MCC via maternal SNPs.</td><td>Testing miscarriage tissue, esp. when an unexpected "normal 46,XX" POC returns with normal parental karyotypes.</td><td><b>An unexpected "46,XX" POC should prompt MCC evaluation (SNP-CMA/QF-PCR) before clinical action.</b> 46,XX is not Turner (45,X).</td><td class="src"><span class="src-q">Repro Q24</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Genetics Qbank "Reproductive Genetics" question #</span>; <span class="src src-lec">purple = OCR'd Reproductive Genetics lecture</span>. <span class="gap">[bracketed grey]</span> = source silent. Built from 47 Reproductive Qbank questions + the lecture; the question PDF in Downloads (<code>Reproductive Genetics - B 2.ocr.pdf</code>) is the redundant backup source.</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity:</b> type several words — every word must match in a row; closer together ranks higher.<br>
+  • <b>Fuzzy:</b> typo tolerance (e.g. <i>"nuchal"→nuchal</i>, <i>"translocaton"→translocation</i>, <i>"premutaton"→premutation</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by category.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length);
+  let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) {
+    const sub = word.substr(s, term.length);
+    if (!sub) break;
+    best = Math.min(best, editDistance(term, sub));
+    if (best === 0) break;
+  }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText);
+  const positions = [];
+  let total = 0;
+  for (const term of terms) {
+    let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => {
+      const s = termMatchesWord(term, w);
+      if (s > bestScore) { bestScore = s; bestPos = idx; }
+    });
+    if (bestScore === 0) return null;
+    total += bestScore;
+    positions.push(bestPos);
+  }
+  if (proxOn.checked && positions.length > 1) {
+    const spread = Math.max(...positions) - Math.min(...positions);
+    total += Math.max(0, 40 - spread * 4);
+  }
+  return total;
+}
+
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<")
+             .replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => {
+    const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) {
+      for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>";
+    }
+    return tok;
+  }).join("");
+}
+
+function filterTable() {
+  const q = input.value.trim();
+  const terms = tokenize(q);
+  let visible = 0;
+  const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else {
+      row.style.display = ""; visible++;
+      Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms));
+      scored.push({ row, sc });
+    }
+  });
+  if (terms.length && scored.length) {
+    scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row));
+  }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+
+function resetAll() {
+  input.value = "";
+  allRows.forEach(r => tbody.appendChild(r));
+  filterTable();
+  input.focus();
+}
+
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col];
+  sortDir[col] = asc;
+  rows.sort((a, b) => {
+    const x = a.cells[col].textContent.trim().toLowerCase();
+    const y = b.cells[col].textContent.trim().toLowerCase();
+    return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+const catChips = ["Carrier screening","Prenatal screening","Diagnostic testing","Mosaicism","PGT","Infertility","POI","Recurrent pregnancy loss"];
+const termChips = ["cfDNA","nuchal translucency","residual risk","FMR1","AZFc","translocation","UPD","quad screen"];
+const chipBox = document.getElementById("chips");
+catChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip cat"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+termChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+
+tbody.addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (tr) tr.classList.toggle("hit");
+});
+
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
