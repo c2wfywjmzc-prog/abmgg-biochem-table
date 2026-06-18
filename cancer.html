@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABMGG Cancer Genetics — Qbank + Lecture Master Table (Fuzzy + Proximity Search)</title>
+<style>
+  :root { --accent:#7b2d8e; --accent-dark:#5e2169; --hit:#fff3cd; --term:#ffe08a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; padding: 18px; background:#f8f9fa; color:#1d2733; }
+  h2 { margin-bottom: 4px; }
+  .sub { color:#5b6b7b; margin-top:0; font-size:.9em; }
+  .controls { position: sticky; top:0; background:#f8f9fa; padding:10px 0; z-index:5; border-bottom:1px solid #e3e8ee; }
+  #searchInput { padding:12px 14px; width:min(560px,100%); font-size:17px; border:2px solid var(--accent); border-radius:8px; outline:none; }
+  #searchInput:focus { box-shadow:0 0 0 3px rgba(123,45,142,.2); }
+  button { padding:11px 16px; font-size:15px; margin-left:8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; }
+  button:hover { background:#f5eef7; }
+  .row2 { margin-top:8px; font-size:.86em; color:#5b6b7b; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  label.opt { cursor:pointer; user-select:none; }
+  #count { font-weight:600; color:var(--accent); }
+  .chips { margin-top:6px; }
+  .chip { display:inline-block; background:#f3e8f7; color:var(--accent-dark); border:1px solid #ddb9e6; border-radius:14px; padding:2px 10px; margin:2px 4px 2px 0; font-size:.8em; cursor:pointer; }
+  .chip:hover { background:var(--accent); color:#fff; }
+  .chip.cat { background:#eafaf0; color:#0a7d33; border-color:#9fdcb6; }
+  .chip.cat:hover { background:#0a7d33; color:#fff; }
+  table { width:100%; border-collapse:collapse; background:#fff; margin-top:12px; font-size:.88em; }
+  th, td { border:1px solid #d4dae0; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--accent); color:#fff; cursor:pointer; position:sticky; top:70px; white-space:nowrap; }
+  th:hover { background:var(--accent-dark); }
+  th .arr { opacity:.55; font-size:.8em; }
+  tr:nth-child(even) td { background:#f7f4f9; }
+  tr.hit td { background:var(--hit) !important; }
+  mark { background:var(--term); padding:0 1px; border-radius:2px; }
+  .none { padding:24px; text-align:center; color:#8090a0; font-style:italic; display:none; }
+.ons-ped{color:#0a7d33;font-weight:700;} .ons-adult{color:#0d5bbf;font-weight:700;} .ons-both{color:#b06a00;font-weight:700;} .ons-con{color:#9aa7b4;}
+  .gap { color:#9aa7b4; font-style:italic; }
+  .src { font-family: ui-monospace, Menlo, monospace; font-size:.78em; line-height:1.5; }
+  .src-q { color:#0a7d33; font-weight:600; }
+  .src-lec { color:#6f42c1; font-weight:600; }
+  .legend { margin-top:8px; font-size:.82em; color:#5b6b7b; }
+  footer { margin-top:18px; font-size:.83em; color:#5b6b7b; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<h2>🎗️ ABMGG / ACMG Cancer Genetics — Master Study Table</h2>
+<p class="sub">Hereditary cancer syndromes from your <b>ACMG Genetics Qbank</b> (Cancer Genetics questions) + the OCR'd <b>Cancer Genetics 1 – Sharo lecture</b>. Source column cites the exact question #s / lecture. <b>Fuzzy + proximity</b> search, fully offline.</p>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder='Try: "microsatellite instability" · "two-hit" · "medullary thyroid" · "pheochromocytoma" · "PARP" · "retinoblastoma"' autocomplete="off">
+  <button onclick="resetAll()">Reset</button>
+  <div class="row2">
+    <label class="opt"><input type="checkbox" id="fuzzyOn" checked> Fuzzy (typo tolerance)</label>
+    <label class="opt"><input type="checkbox" id="proxOn" checked> Proximity ranking</label>
+    <span><span id="count">0</span> rows shown</span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Syndrome / Disorder<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(1)">Onset<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(2)">Category<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(3)">Gene(s)<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(4)">Gene Type / Mechanism<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(5)">Inheritance<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(6)">Associated Tumors / Cancers<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(7)">Key Features<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(8)">Treatment / Surveillance<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(9)">Board Pearl / Dx<span class="arr"> ⇅</span></th>
+      <th onclick="sortTable(10)">Source<span class="arr"> ⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ============ HEREDITARY CRC / GI POLYPOSIS ============ -->
+    <tr><td>Lynch syndrome / HNPCC</td><td class="ons-adult">Adult</td><td>Hereditary CRC (non-polyposis)</td><td>MLH1, MSH2, MSH6, PMS2 (also EPCAM 3' del silencing MSH2)</td><td><b>DNA repair (MMR)</b> caretaker TSG — defective mismatch repair → MSI</td><td>Autosomal dominant</td><td>Colorectal (right-sided predominant, ~60-80% lifetime), endometrial (~70%), ovarian, gastric, bile duct, urinary/urothelial, small bowel, pancreatic, brain (Turcot); breast NOT increased</td><td>Defective DNA mismatch repair → <b>microsatellite instability (MSI-H)</b>; earlier onset (~40s); MSH6 = MSI-low, high endometrial; PMS2 lower risk; ~2% of all CRC is germline Lynch (rest of MSI-H = somatic MLH1 methylation)</td><td>Tumor IHC for 4 MMR proteins first; MLH1/PMS2 loss → BRAF V600E / MLH1 methylation (positive = sporadic); colonoscopy q1-2yr from age 20-25; EGD q3-5yr from 30-40; MSI-H → checkpoint inhibitors</td><td><b>BRAF V600E essentially never in true Lynch (a sporadic marker); MSI-H = companion dx for checkpoint blockade.</b> Amsterdam 3-2-1 rule</td><td class="src"><span class="src-q">Cancer Q3, Q8, Q37, Q41, Q44</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Familial Adenomatous Polyposis (FAP)</td><td class="ons-both">Pediatric &amp; Adult</td><td>Hereditary CRC / polyposis</td><td>APC</td><td><b>Tumor suppressor</b> (APC) — two-hit; Wnt-pathway gatekeeper</td><td>Autosomal dominant (15-30% de novo)</td><td>Colorectal (near-100% untreated), gastric/duodenal carcinoma, desmoid tumors (3' variants), thyroid cancer (~1%), hepatoblastoma (~10%)</td><td><b>Hundreds-to-thousands of adenomatous polyps</b>, CRC in young adults (&lt;30); classic two-hit TSG; attenuated FAP (fewer polyps, later, 5'/3' variants)</td><td>Colonoscopy from age 10-15 q1-2yr; colectomy late teens-early 20s by polyp load; lifelong upper GI endoscopy; annual thyroid exam; screen FAP children for hepatoblastoma</td><td><b>Young adult + hundreds of polyps = FAP; upper-GI surveillance continues after colectomy.</b> 5-10% of hepatoblastoma = germline APC</td><td class="src"><span class="src-q">Cancer Q19, Q35, Q47, Q50, Q54</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>MUTYH-Associated Polyposis</td><td class="ons-adult">Adult</td><td>Hereditary CRC / polyposis</td><td>MUTYH (biallelic)</td><td><b>DNA repair (BER)</b> — biallelic LOF → somatic APC mutations</td><td>Autosomal recessive</td><td>Colorectal cancer (adenomatous polyposis)</td><td><b>Adenomatous polyps</b>; MUTYH = base excision repair (BER) protein; absent BER → somatic APC mutations in polyps; p.Y165C & p.G382D common; later onset than FAP</td><td class="gap">[not in source]</td><td>AR adenomatous polyposis distinct from AD FAP; BER defect, not MMR (related: NTHL1 biallelic BER polyposis)</td><td class="src"><span class="src-q">Cancer Q19, Q47</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Peutz-Jeghers Syndrome</td><td class="ons-both">Pediatric &amp; Adult</td><td>Hereditary GI / hamartomatous polyposis</td><td>STK11 (LKB1), 19p13.3</td><td><b>Tumor suppressor</b> (STK11/LKB1)</td><td>Autosomal dominant (~50% de novo)</td><td>Breast (~32-50%), colorectal, pancreatic, gastric, ovarian (SCTAT), cervical (adenoma malignum), lung; Sertoli cell testicular tumors; ~85-90% lifetime cancer risk</td><td><b>Large pedunculated hamartomatous polyps</b> (small bowel) → intussusception; mucocutaneous melanin pigmentation (lips, buccal mucosa, digits) in childhood, fading later</td><td>Baseline upper/lower endoscopy + small-bowel imaging by age 8-10; counsel re intussusception</td><td><b>Intussusception in a teenager = PJS until proven otherwise.</b> Sertoli cell testicular tumor → test STK11</td><td class="src"><span class="src-q">Cancer Q2, Q19, Q47</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Juvenile Polyposis Syndrome</td><td class="ons-both">Pediatric &amp; Adult</td><td>Hereditary GI / hamartomatous polyposis</td><td>SMAD4, BMPR1A (~50%); ~1-2% PTEN</td><td><b>Tumor suppressor</b> — TGF-β/BMP pathway (SMAD4/BMPR1A)</td><td>Autosomal dominant</td><td>Colorectal cancer (up to ~50%, avg dx 43); SMAD4 &gt; BMPR1A risk</td><td><b>Juvenile (hamartomatous) colonic polyps (≥5)</b>, childhood onset; rectal bleeding/prolapse; TGF-β/BMP pathway; SMAD4 → JPS-HHT overlap (~38%)</td><td class="gap">[not in source]</td><td><b>Young child + rectal bleeding/prolapse from bleeding polyp = JPS (SMAD4/BMPR1A).</b> SMAD4 → screen for HHT</td><td class="src"><span class="src-q">Cancer Q19</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>GAPPS (Gastric Adenocarcinoma &amp; Proximal Polyposis of Stomach)</td><td class="ons-adult">Adult</td><td>Hereditary gastric polyposis</td><td>APC (promoter 1B variants)</td><td><b>Tumor suppressor</b> (APC) — promoter (YY1) mutation, not coding LOF</td><td class="gap">[not in source]</td><td>Intestinal-type gastric adenocarcinoma (NOT diffuse histology)</td><td><b>Fundic gland polyps</b> in proximal stomach; NO colorectal/duodenal polyposis; caused by <b>APC promoter 1B (YY1 binding site) mutations</b> — distinct from coding LOF of FAP</td><td class="gap">[not in source]</td><td><b>GAPPS mechanism = promoter mutation (APC promoter 1B / YY1 site), not coding LOF.</b> Intestinal (not diffuse) histology</td><td class="src"><span class="src-q">Cancer Q35</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Hereditary Diffuse Gastric Cancer (HDGC)</td><td class="ons-adult">Adult</td><td>Hereditary gastric / breast cancer</td><td>CDH1 (E-cadherin)</td><td><b>Tumor suppressor</b> (CDH1) — E-cadherin cell adhesion</td><td>Autosomal dominant</td><td><b>Diffuse (signet-ring) gastric cancer</b> (~70-80%) and lobular breast cancer (~40-55% in women; NOT ductal)</td><td>CDH1 = E-cadherin cell-adhesion molecule; diffuse type (linitis plastica), not intestinal</td><td>Prophylactic total gastrectomy age 20-30 (random biopsies miss disease); lobular breast screening for female carriers</td><td><b>CDH1 carrier → counsel about lobular (not ductal) breast cancer plus diffuse gastric cancer.</b></td><td class="src"><span class="src-q">Cancer Q38</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+
+    <!-- ============ BREAST / OVARIAN / MULTI-TUMOR ============ -->
+    <tr><td>Hereditary Breast &amp; Ovarian Cancer (HBOC)</td><td class="ons-adult">Adult</td><td>HBOC / breast-ovarian</td><td>BRCA1, BRCA2</td><td><b>DNA repair (HR)</b> — BRCA1/2 caretaker TSG; two-hit + somatic LOH</td><td>Autosomal dominant (two-hit; germline + somatic LOH)</td><td>Female breast, ovarian; <b>male breast (BRCA2)</b>; prostate (BRCA2, aggressive), pancreatic, melanoma. BRCA1 ovarian ~25-60%; BRCA2 breast ~45-70%</td><td>BRCA1 tumors basal/triple-negative, HRD; BRCA2 mostly ER+ ductal; 3 Ashkenazi founder variants (carrier 2.4%)</td><td>RRSO for BRCA1 by age 35-40; male BRCA2 annual breast exam from 35; <b>PARP inhibitors</b> (synthetic lethality) for HRD tumors; NCCN testing criteria</td><td>Male breast cancer at ANY age = automatic testing referral; BRCA2 = the "male cancer BRCA"; CA-125 is NOT screening</td><td class="src"><span class="src-q">Cancer Q5, Q7, Q12, Q33, Q48</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Other Breast-Risk Genes (moderate/high penetrance)</td><td class="ons-adult">Adult</td><td>Breast cancer susceptibility</td><td>PALB2, ATM, CHEK2, FGFR2</td><td><b>DNA repair (HR)</b> — PALB2/ATM (TSG), CHEK2 checkpoint; FGFR2 = GWAS locus</td><td class="gap">[not in source]</td><td>Breast cancer; PALB2 also pancreatic</td><td>PALB2 binds BRCA2 (3rd-strongest breast risk), HRD/"BRCAness"; CHEK2 recurrent 1100delC (RR ~2); CHEK2 once "LFS2" but does NOT cause LFS pattern; FGFR2 = common GWAS polymorphism</td><td>PALB2 in NCCN high-penetrance breast panel; HRD tumors → PARP inhibitors</td><td><b>FGFR2 = breast locus found by GWAS</b> (common polymorphism), unlike rare-variant ATM/PALB2/PTEN and frameshift CHEK2</td><td class="src"><span class="src-q">Cancer Q17</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Hereditary Ovarian Cancer (RAD51C)</td><td class="ons-adult">Adult</td><td>HBOC / ovarian</td><td>RAD51C</td><td><b>DNA repair (HR)</b> — RAD51C TSG</td><td class="gap">[not in source]</td><td>Ovarian cancer (high risk); modest breast risk</td><td><b>Homologous recombination</b> DNA-repair gene; recently discovered ovarian cancer gene</td><td>Any woman with ovarian cancer (any age) offered germline testing incl. RAD51C</td><td>RAD51C = HR gene → high ovarian risk; ATM/MYCN/RB1/TP53 not clinically relevant for ovarian predisposition</td><td class="src"><span class="src-q">Cancer Q52</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Li-Fraumeni Syndrome (LFS)</td><td class="ons-both">Pediatric &amp; Adult</td><td>Multi-tumor</td><td>TP53</td><td><b>Tumor suppressor</b> (TP53) — 'guardian of the genome'</td><td>Autosomal dominant (up to 50% de novo)</td><td><b>SBLA: Sarcoma (soft tissue & osteosarcoma), Breast (most common, avg 31), Leukemia/lymphoma (hypodiploid ALL), Adrenocortical carcinoma, Brain (choroid plexus carcinoma)</b>; ~90% of near-hypodiploid ALL has TP53</td><td>~85% lifetime penetrance; women earlier/greater risk; 15% develop &gt;1 cancer; avoid radiation</td><td><b>Toronto Protocol</b>: q3-4mo exam/imaging, annual whole-body MRI + brain MRI, breast MRI from 18-21, colonoscopy from 25</td><td>Whole-body MRI for body-wide cancer risk = TP53; <b>Chompret criteria</b>; hypodiploid childhood ALL → test germline TP53</td><td class="src"><span class="src-q">Cancer Q20, Q22, Q24, Q48, Q54</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>PTEN Hamartoma Tumor Syndrome (Cowden)</td><td class="ons-adult">Adult</td><td>Multi-tumor / hamartomatous</td><td>PTEN</td><td><b>Tumor suppressor</b> (PTEN) — PI3K/AKT/mTOR pathway</td><td>Autosomal dominant</td><td><b>Breast (~30%), thyroid (~10%)</b>; endometrial, renal cell; adenomatous/hamartomatous colon polyps</td><td>Trichilemmomas, acral keratoses, mucosal papillomas, pigmented penile macules; Lhermitte-Duclos (cerebellar gangliocytoma); macrocephaly; autism</td><td>Breast MRI; PTEN in NCCN high-penetrance breast panel</td><td>AD breast + thyroid + colon adenomatous polyps = PTEN/Cowden; macrocephaly + trichilemmomas points to PTEN</td><td class="src"><span class="src-q">Cancer Q14, Q18</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Tuberous Sclerosis Complex (TSC)</td><td class="ons-ped">Pediatric</td><td>Multi-tumor / hamartomatous</td><td>TSC1, TSC2</td><td><b>Tumor suppressor</b> (TSC1/2) — negative regulator of mTOR</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td><b>TSC1/TSC2 mutations → sensitivity to mTOR inhibitors (everolimus)</b>; tested as a focused 2-gene panel</td><td>TSC1/TSC2 = mTOR-inhibitor sensitivity (VHL is the distractor pairing)</td><td class="src"><span class="src-q">Cancer Q12</span></td></tr>
+
+    <!-- ============ RENAL / ENDOCRINE / PARAGANGLIOMA ============ -->
+    <tr><td>Von Hippel-Lindau (VHL)</td><td class="ons-both">Pediatric &amp; Adult</td><td>Hereditary RCC / paraganglioma</td><td>VHL (3p25.3, TSG)</td><td><b>Tumor suppressor</b> (VHL) — two-hit; HIF degradation (pVHL)</td><td>Autosomal dominant (~20% de novo)</td><td><b>Clear cell RCC</b> (~70% by 60; bilateral/multifocal); pheochromocytoma; retinal & CNS hemangioblastomas; endolymphatic sac tumors; pancreatic cysts/NETs; epididymal cystadenomas</td><td>Type 1 (truncations): RCC high, pheo low; Type 2 (missense): high pheo. Leading cause of death = RCC</td><td>Abdominal imaging from age 15-16; eye exam from age 1; catecholamines/metanephrines from age 5</td><td>&gt;35% <b>missense</b> variants; endolymphatic sac tumor distinguishes from other pheo genes; almost always clear cell (NOT chromophobe)</td><td class="src"><span class="src-q">Cancer Q9, Q10, Q36</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Birt-Hogg-Dubé Syndrome</td><td class="ons-adult">Adult</td><td>Hereditary RCC</td><td>FLCN / BHD</td><td><b>Tumor suppressor</b> (FLCN)</td><td class="gap">[not in source]</td><td><b>Chromophobe/oncocytic RCC</b>; benign fibrofolliculomas; colonic polyps; medullary thyroid cancer</td><td>Lung cysts → <b>spontaneous pneumothorax</b> in teens/young adults</td><td class="gap">[not in source]</td><td>Chromophobe histology → BHD; ask about spontaneous pneumothorax; no uterine leiomyomas (vs HLRCC)</td><td class="src"><span class="src-q">Cancer Q9, Q18</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Hereditary Leiomyomatosis &amp; RCC (HLRCC / Reed)</td><td class="ons-adult">Adult</td><td>Hereditary RCC</td><td>FH (fumarate hydratase)</td><td><b>Tumor suppressor</b> (FH) — Krebs-cycle enzyme; pseudohypoxia</td><td>Autosomal dominant</td><td><b>Type 2 papillary RCC</b>; cutaneous leiomyomas; uterine leiomyomas/fibroids</td><td>Multiple skin leiomyomas + uterine fibroids + familial RCC</td><td class="gap">[not in source]</td><td>Skin leiomyomas + familial RCC = FH; vs VHL (no skin/uterine); Krebs-cycle enzyme</td><td class="src"><span class="src-q">Cancer Q18</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Hereditary Papillary RCC</td><td class="ons-adult">Adult</td><td>Hereditary RCC</td><td>MET (c-MET oncogene, activating)</td><td><b>Oncogene</b> (MET) — activating c-MET</td><td class="gap">[not in source]</td><td><b>Type 1 papillary RCC</b></td><td>No skin or uterine lesions (vs HLRCC)</td><td class="gap">[not in source]</td><td>Papillary RCC via activating c-MET oncogene; type 1 papillary; lacks skin/uterine findings</td><td class="src"><span class="src-q">Cancer Q18</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Multiple Endocrine Neoplasia type 2 (MEN2A &amp; MEN2B)</td><td class="ons-both">Pediatric &amp; Adult</td><td>Endocrine / MEN</td><td>RET (proto-oncogene, chr 10; gain-of-function)</td><td><b>Oncogene</b> (RET) — activating/gain-of-function RTK</td><td>Autosomal dominant</td><td><b>Medullary thyroid cancer (MTC)</b> (calcitonin marker, ~100% penetrance); pheochromocytoma; MEN2A: hyperparathyroidism; MEN2B: mucosal/GI ganglioneuromas, marfanoid habitus</td><td>MEN2A onset order MTC → pheo → parathyroid; cysteine missense &gt;90%; MEN2B p.M918T; some RET alleles → Hirschsprung</td><td>Prophylactic thyroidectomy: MEN2A by <b>age 5</b>, MEN2B by age 1; surveillance calcitonin + ultrasound</td><td>Activating RET, AD (not LOF); prophylactic surgery is the classic "testing enables prevention" example</td><td class="src"><span class="src-q">Cancer Q27, Q39</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Hereditary Paraganglioma-Pheochromocytoma</td><td class="ons-adult">Adult</td><td>Paraganglioma</td><td>SDHB, SDHD (also SDHC/SDHA/SDHAF2; succinate dehydrogenase, complex II)</td><td><b>Tumor suppressor</b> (SDHx) — mito complex II; pseudohypoxia</td><td>Autosomal dominant; SDHD parent-of-origin (paternal)</td><td><b>Pheochromocytoma/paraganglioma</b>; glomus & carotid body tumors; GIST</td><td>40-50% of pheo/PGL carry P/LP variants; more extra-adrenal than MEN2A/VHL</td><td>Monitor for <b>malignant transformation</b> (SDHB high metastatic risk)</td><td>SDHB → malignancy/metastasis; SDHD = paternal parent-of-origin; no parathyroid tumors (vs MEN)</td><td class="src"><span class="src-q">Cancer Q10, Q28</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+
+    <!-- ============ DNA REPAIR / CHROMOSOME INSTABILITY ============ -->
+    <tr><td>Fanconi Anemia</td><td class="ons-ped">Pediatric</td><td>Chromosome instability / crosslink repair</td><td>FANC genes (&gt;22 groups; FANCA common; FANCB X-linked; FANCD1=BRCA2, FANCN=PALB2)</td><td><b>DNA repair</b> — interstrand crosslink (FA/BRCA pathway)</td><td>Autosomal recessive (FANCB X-linked)</td><td>AML/MDS (~30% by 40); squamous cell carcinoma (head/neck, anogenital, esp. post-HSCT); GYN malignancies</td><td>Progressive marrow failure → pancytopenia (<b>onset 5-10y</b>; normal at birth); radial ray/thumb defects, short stature, café-au-lait, microcephaly, renal/genital anomalies</td><td><b>DEB/MMC chromosome-breakage assay = gold-standard dx</b> (before BMT); HSCT cures marrow failure but not solid tumors; chemo/radiation sensitivity; lifelong SCC surveillance</td><td><b>Chromosome breakage (DEB/MMC, quadriradials)</b> is THE test; radial ray defect + pancytopenia = FA; thumbs absent/hypoplastic (present in TAR)</td><td class="src"><span class="src-q">Cancer Q4, Q23, Q29, Q32</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Dyskeratosis Congenita</td><td class="ons-both">Pediatric &amp; Adult</td><td>Telomere biology disorder / bone marrow failure</td><td>DKC1 (dyskerin, X-linked, most common); TERT, TERC (AD)</td><td><b>Telomere maintenance</b> defect (telomeropathy)</td><td>Most often X-linked (DKC1); also AD/AR</td><td>Head & neck squamous cell carcinoma; AML/MDS; malignancy ~20% in young adults</td><td>Triad: <b>nail dystrophy + oral leukoplakia + reticulate skin pigmentation</b>; progressive marrow failure (~80% by 30); pulmonary/hepatic fibrosis; death in 3rd decade</td><td><b>Telomere flow-FISH</b> (very short telomeres &lt;1st %ile); HSCT needs reduced-intensity conditioning (standard → fatal lung/liver toxicity)</td><td><b>Very short telomeres for age (flow-FISH)</b> is the test; nail dystrophy + leukoplakia + marrow failure in X-linked pattern = DKC; lacks radial ray anomalies (vs FA)</td><td class="src"><span class="src-q">Cancer Q23, Q29</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Bloom Syndrome</td><td class="ons-both">Pediatric &amp; Adult</td><td>Chromosome instability / RecQ helicase</td><td>BLM (RecQ DNA helicase; 15q26.1)</td><td><b>DNA repair</b> — RecQ helicase (↑ sister chromatid exchange)</td><td>Autosomal recessive</td><td><b>Leukemia/lymphoma in childhood</b>; solid tumors (colon, breast, skin) in young adulthood; multiple primaries (~25%)</td><td>Severe proportionate pre/postnatal growth deficiency (adult height typically &lt;150cm); <b>photosensitive butterfly facial rash</b>; immunodeficiency; Ashkenazi-enriched; death ~27y</td><td class="gap">[not in source]</td><td><b>Sister chromatid exchange (SCE)</b> markedly increased = the diagnostic test; butterfly rash + severe short stature + childhood leukemia = Bloom</td><td class="src"><span class="src-q">Cancer Q25</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Xeroderma Pigmentosum (&amp; Cockayne)</td><td class="ons-ped">Pediatric</td><td>DNA repair / nucleotide excision repair</td><td>XP genes</td><td><b>DNA repair (NER)</b> — UV-lesion repair; Cockayne = transcription-coupled repair</td><td>Autosomal recessive</td><td>Dramatically increased <b>skin cancer</b> (XP); Cockayne has NO significant cancer risk</td><td>XP cannot repair UV-induced lesions → mutagenesis; <b>Cockayne = deficient transcription-coupled repair</b> (no cancer risk)</td><td class="gap">[not in source]</td><td><b>XP = deficient nucleotide excision repair (NER) of UV lesions</b> → skin cancer (not MMR=Lynch, not crosslink=Fanconi); Cockayne = transcription-coupled repair defect, no cancer</td><td class="src"><span class="src-q">Cancer Q32</span></td></tr>
+
+    <!-- ============ PEDIATRIC / EMBRYONAL / NEUROCUTANEOUS ============ -->
+    <tr><td>Retinoblastoma</td><td class="ons-ped">Pediatric</td><td>Pediatric/embryonal (ocular)</td><td>RB1 (13q14)</td><td><b>Tumor suppressor</b> (RB1) — two-hit (Knudson); G1→S checkpoint</td><td>Autosomal dominant (~90% penetrance); two-hit at cellular level</td><td>Retinoblastoma; 2nd primaries: osteosarcoma & soft-tissue sarcomas (esp post-radiation), melanoma, leiomyosarcoma, lung CA (~68% by ~50)</td><td><b>Two-hit / Knudson hypothesis</b> (LOH = 2nd hit); RB1 blocks G1→S; bilateral ~100% heritable, unilateral 11-15%; leukocoria/strabismus; mosaicism ~3-7%</td><td>RB1 germline testing for ALL RB patients; screen relatives; sibs tested at birth (gonadal mosaicism); avoid radiation (sarcoma)</td><td>Two hits + normal blood = sporadic (recurrence &lt;1%); bilateral + variant, parents neg ≈ 6-7% (gonadal mosaicism); bilateral RB &gt;95% hereditary</td><td class="src"><span class="src-q">Cancer Q11, Q16, Q31, Q34</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>DICER1 Syndrome / Pleuropulmonary Blastoma</td><td class="ons-ped">Pediatric</td><td>Pediatric/embryonal</td><td>DICER1 (14q32; RNase III, miRNA processing)</td><td><b>Tumor suppressor</b> (DICER1) — miRNA processing (RNase III)</td><td>Autosomal dominant, reduced penetrance</td><td><b>Pleuropulmonary blastoma (PPB)</b> (&gt;80% carry germline DICER1); embryonal rhabdomyosarcoma; cystic nephroma; multinodular goiter/thyroid CA; Sertoli-Leydig tumor; pineoblastoma; Wilms</td><td>Embryonal tumors; PPB usually &lt;6y (cystic type I → solid type III); thyroid disease most common in adult carriers</td><td>DICER1 testing for any cystic lung lesion resected in a child; PPB + relative thyroid disease → test DICER1</td><td>PPB + relative with multinodular goiter = DICER1; embryonal rhabdomyosarcoma in spectrum</td><td class="src"><span class="src-q">Cancer Q1, Q53</span></td></tr>
+    <tr><td>Beckwith-Wiedemann Syndrome / Wilms Tumor</td><td class="ons-ped">Pediatric</td><td>Pediatric/embryonal (overgrowth/imprinting)</td><td>11p15 imprinted region — IC1 (H19/IGF2), IC2 (LIT1/KCNQ1OT1), CDKN1C</td><td><b>Imprinting</b> (11p15) — IGF2/H19/KCNQ1OT1/CDKN1C</td><td>Disrupted 11p15 imprinting (UPD, methylation); CDKN1C mutations</td><td>Wilms tumor, hepatoblastoma; overall tumor risk ~7.5%</td><td><b>Hemihypertrophy</b> & organomegaly (highest tumor risk); macrosomia, macroglossia, omphalocele; neonatal hypoglycemia (~50%); overgrowth normalizes by 7-8</td><td>Renal ultrasound q3 months to age 7; AFP q2-3 months to age 4 (hepatoblastoma)</td><td>Imprinting disorder of 11p15. Wilms risk: IC1 (H19/IGF2) LOM highest ~24-28%; paternal UPD ~10-15%; IC2 ~2-3%; CDKN1C &lt;2%</td><td class="src"><span class="src-q">Cancer Q15, Q45</span></td></tr>
+    <tr><td>Gorlin / Basal Cell Nevus Syndrome</td><td class="ons-both">Pediatric &amp; Adult</td><td>Hamartoma / neurocutaneous</td><td>PTCH1 (9q22; Sonic Hedgehog pathway), SUFU</td><td><b>Tumor suppressor</b> (PTCH1/SUFU) — Sonic Hedgehog pathway</td><td>Autosomal dominant</td><td><b>Multiple basal cell carcinomas</b>; medulloblastoma (~4-5%, desmoplastic, &lt;5y); odontogenic (jaw) keratocysts</td><td>Frontal bossing; palmar/plantar pits; bifid ribs; calcified falx cerebri; BCCs from childhood/teens</td><td>Avoid radiation (induces hundreds of BCCs in field); vismodegib (hedgehog inhibitor) for advanced BCCs</td><td>Medulloblastoma may precede BCCs; calcified falx cerebri is a clue; &gt;5 BCCs or BCCs &lt;20y → Gorlin; brain tumor = medulloblastoma (vs NF1 glioma, VHL hemangioblastoma)</td><td class="src"><span class="src-q">Cancer Q26, Q30, Q43</span></td></tr>
+    <tr><td>Malignant Rhabdoid Tumor / Rhabdoid Predisposition</td><td class="ons-ped">Pediatric</td><td>Pediatric/embryonal</td><td>SMARCB1 (chromatin remodeling)</td><td><b>Tumor suppressor</b> (SMARCB1) — chromatin remodeling (SWI/SNF)</td><td class="gap">[not in source]</td><td><b>Malignant rhabdoid tumor of kidney/liver</b>; CNS atypical teratoid/rhabdoid tumor (AT/RT)</td><td class="gap">[not in source]</td><td class="gap">[not in source]</td><td>Renal rhabdoid tumor or CNS AT/RT → test SMARCB1; chromatin-remodeling gene (vs CTNNB1→hepatoblastoma, PTCH1/SUFU→medulloblastoma, DICER1→PPB)</td><td class="src"><span class="src-q">Cancer Q43</span></td></tr>
+    <tr><td>Neuroblastoma</td><td class="ons-ped">Pediatric</td><td>Pediatric/embryonal</td><td>ALK (germline missense → familial), MYCN (somatic amplification)</td><td><b>Oncogene</b> — ALK (activating), MYCN (amplification)</td><td>Familial: autosomal dominant (germline ALK)</td><td>Neuroblastoma (most common extracranial solid tumor of childhood; neural crest, adrenal medulla)</td><td>Median dx ~18 mo; mass may cross midline (Wilms respects it); spontaneous regression (4S infants); opsoclonus-myoclonus; ↑urinary VMA/HVA</td><td><b>MYCN amplification</b> = worst prognosis, determines treatment intensity</td><td>Germline = ALK missense (familial); somatic ALK = rearrangements; <b>MYCN amplification</b> (ecDNA/HSR) = poor prognosis</td><td class="src"><span class="src-q">Cancer Q6, Q42</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Neurofibromatosis type 1 (NF1)</td><td class="ons-both">Pediatric &amp; Adult</td><td>Hamartoma / neurocutaneous</td><td>NF1 (TSG; ~3-5% deletions)</td><td><b>Tumor suppressor</b> (NF1) — RAS-GAP (neurofibromin)</td><td>Autosomal dominant</td><td>Pheochromocytoma; optic pathway tumor (optic glioma = pilocytic astrocytoma); neurofibromas; <b>malignant peripheral nerve sheath tumor (MPNST)</b></td><td>Café-au-lait spots & axillary freckling, learning disabilities, optic pathway tumors in young children; MPNST emerges in teens/young adults</td><td class="gap">[not in source]</td><td>MPNST = malignancy of adolescence; optic glioma/pilocytic astrocytoma is the NF1 brain tumor (acoustic schwannoma = NF2); one of the pheo/PGL genes</td><td class="src"><span class="src-q">Cancer Q10, Q30, Q49</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+
+    <!-- ============ HEMATOLOGIC PREDISPOSITION / SOMATIC / CONCEPTS ============ -->
+    <tr><td>Transient Myeloproliferative Disorder (Down syndrome)</td><td class="ons-ped">Pediatric</td><td>Hematologic predisposition</td><td>GATA1 (somatic)</td><td><b>Oncogene / TF</b> — somatic GATA1 (truncated GATA1s)</td><td>Somatic (in constitutional Trisomy 21)</td><td>Transient myeloproliferative disorder (TMD); ~20-30% progress to acute megakaryoblastic leukemia (AMKL)</td><td><b>Somatic GATA1 mutation</b> in nearly all TMD in T21 → truncated GATA1s; T21 + GATA1 both required</td><td>TMD usually self-resolves ~3 mo; monitor for later AMKL</td><td>Infant with Down syndrome + TMD → <b>somatic GATA1</b> on marrow. Distractors: AKT=Proteus, ETV6/IKZF1=ALL, RUNX1=familial platelet d/o</td><td class="src"><span class="src-q">Cancer Q21</span></td></tr>
+    <tr><td>Hypodiploid ALL / Familial MDS-Leukemia genes</td><td class="ons-ped">Pediatric</td><td>Hematologic predisposition</td><td>TP53 (ETV6, GATA2, RUNX1, PAX5 as distractors)</td><td><b>Tumor suppressor</b> (TP53)</td><td>Germline (~50% of TP53+ hypodiploid ALL = Li-Fraumeni)</td><td>Near-hypodiploid ALL (~35 chromosomes); Li-Fraumeni syndrome</td><td><b>~90% of near-hypodiploid ALL carry TP53</b>; ~50% germline; near-haploid cells can double → pseudohyperdiploid; poor prognosis</td><td>Germline TP53 testing + counseling (Li-Fraumeni, surveillance); distinguish from true hyperdiploidy (good px) by FISH/SNP array</td><td>Child ALL with ~35-chromosome (hypodiploid) karyotype → <b>TP53</b>. Distractors: ETV6=hyperdiploid ALL, GATA2=MDS, RUNX1=thrombocytopenia+AML, PAX5=ALL chr9</td><td class="src"><span class="src-q">Cancer Q22</span></td></tr>
+    <tr><td>NSCLC — Somatic Targeted Therapy (ALK / EGFR)</td><td class="ons-adult">Adult</td><td>Somatic oncogene / targeted Rx</td><td>ALK (EML4-ALK fusion); EGFR</td><td><b>Oncogene</b> — EGFR (activating), EML4-ALK fusion</td><td>Somatic</td><td>Non-small cell lung cancer (NSCLC)</td><td><b>EML4-ALK inversion</b> → crizotinib; <b>activating EGFR mutation</b> → gefitinib; precision-oncology example where molecular testing guides therapy</td><td>Crizotinib for EML4-ALK+ NSCLC; gefitinib for EGFR-mutant NSCLC; FDA approval specific to gene + rearrangement type</td><td>Crizotinib needs <b>EML4-ALK inversion</b>; gefitinib needs <b>EGFR mutation</b>. Distractors: BCR-ABL=CML, N-MYC=neuroblastoma, RET=MTC, RAS≠gefitinib target</td><td class="src"><span class="src-q">Cancer Q13, Q40</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Secondary Glioblastoma (IDH oncogene pattern)</td><td class="ons-adult">Adult</td><td>Somatic oncogene / targeted Rx</td><td>IDH2 (also IDH1)</td><td><b>Oncogene</b> — somatic IDH missense (single allele)</td><td>Somatic</td><td>Secondary glioblastoma (after prior astrocytoma)</td><td><b>Somatic IDH2 missense</b> in tumor only — single heterozygous mutant allele; proto-oncogene mutations are somatic, not inherited; IDH1/2 alter substrates → chromatin remodeling</td><td class="gap">[not in source]</td><td>Tumor IDH2 missense + germline sample → <b>normal IDH2</b> (oncogene mutation is somatic, single allele, not LOH/amplification)</td><td class="src"><span class="src-q">Cancer Q51</span> <span class="src-lec">+ Lecture: Cancer Genetics 1</span></td></tr>
+    <tr><td>Oncogene Activation Mechanisms &amp; Oncogene vs TSG (concept)</td><td class="ons-con">Concept</td><td>Concept</td><td>RAS, RET, IDH1/2, BRAF, MYCN, HER2/Neu (c-ERBB2), MYC, BCR-ABL</td><td><b>Concept</b> — oncogene (GOF, activated) vs TSG (LOF, two-hit)</td><td>Concept (oncogenes activated/rarely inherited; TSGs lost/often inherited)</td><td>Neuroblastoma (MYCN), breast (HER2/Neu), Burkitt (MYC), CML (BCR-ABL), melanoma (BRAF)</td><td><b>4 oncogene activation mechanisms:</b> (1) SNV/missense (RAS, RET, IDH); (2) <b>amplification</b> ↑copy number (MYCN, HER2/Neu — ecDNA/double minutes vs HSR); (3) translocation → fusion gene (BCR-ABL) or abnormal expression (MYC in Burkitt)</td><td>Targeted Rx: <b>trastuzumab</b> for HER2 amplification; BRAF V600E inhibitors (melanoma); EGFR in lung; <b>circulating tumor DNA</b> for dx/monitoring</td><td>Genetic predisposition to cancer is most often <b>LOF in TSGs</b>; oncogenes are activated/upregulated and rarely inherited. MYCN amp = poor-prognosis neuroblastoma</td><td class="src"><span class="src-lec">Lecture: Cancer Genetics 1</span></td></tr>
+  </tbody>
+</table>
+<div class="none" id="noResults">No rows match — try fewer words or enable Fuzzy.</div>
+
+<p class="legend"><b>Source column:</b> <span class="src src-q">green = ACMG Genetics Qbank "Cancer Genetics" question #</span>; <span class="src src-lec">purple = OCR'd "Cancer Genetics 1 – Sharo" lecture</span>. <span class="gap">[bracketed grey]</span> = source silent (left blank, not filled from training knowledge). Built from 53 Cancer Genetics Qbank questions + the cancer lecture.</p>
+
+<footer>
+  <b>How the search works</b><br>
+  • <b>Multi-word / proximity:</b> type several words — every word must match in a row; rows where they sit close together rank to the top.<br>
+  • <b>Fuzzy:</b> typo tolerance (e.g. <i>"retinoblastome"→retinoblastoma</i>, <i>"pheo"→pheochromocytoma</i>, <i>"microsat"→microsatellite</i>).<br>
+  • Click a header to sort ↑↓ · click a row to pin-highlight · matched terms <mark>highlighted</mark> · green chips filter by category.<br>
+  • 100% offline — no internet, no libraries.
+</footer>
+
+<script>
+const tbody = document.querySelector("#dataTable tbody");
+const allRows = Array.from(tbody.rows);
+const originalHTML = allRows.map(r => Array.from(r.cells).map(c => c.innerHTML));
+const input = document.getElementById("searchInput");
+const fuzzyOn = document.getElementById("fuzzyOn");
+const proxOn = document.getElementById("proxOn");
+
+function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  let prev = Array.from({length: n + 1}, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+function fuzzyThreshold(len) { return len <= 4 ? 1 : len <= 7 ? 2 : 3; }
+
+function termMatchesWord(term, word) {
+  if (word.includes(term)) return term.length >= word.length ? 100 : 70;
+  if (!fuzzyOn.checked) return 0;
+  const thr = fuzzyThreshold(term.length);
+  let best = 99;
+  for (let s = 0; s + term.length <= word.length + thr; s++) {
+    const sub = word.substr(s, term.length);
+    if (!sub) break;
+    best = Math.min(best, editDistance(term, sub));
+    if (best === 0) break;
+  }
+  best = Math.min(best, editDistance(term, word));
+  return best <= thr ? Math.max(20, 60 - best * 12) : 0;
+}
+
+function tokenize(text) { return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+
+function scoreRow(rowText, terms) {
+  const words = tokenize(rowText);
+  const positions = [];
+  let total = 0;
+  for (const term of terms) {
+    let bestScore = 0, bestPos = -1;
+    words.forEach((w, idx) => {
+      const s = termMatchesWord(term, w);
+      if (s > bestScore) { bestScore = s; bestPos = idx; }
+    });
+    if (bestScore === 0) return null;
+    total += bestScore;
+    positions.push(bestPos);
+  }
+  if (proxOn.checked && positions.length > 1) {
+    const spread = Math.max(...positions) - Math.min(...positions);
+    total += Math.max(0, 40 - spread * 4);
+  }
+  return total;
+}
+
+function highlightCell(html, terms) {
+  if (!terms.length) return html;
+  return html.replace(/>([^<]+)</g, (m, txt) => ">" + markText(txt, terms) + "<")
+             .replace(/^([^<]+)/, (m, txt) => markText(txt, terms));
+}
+function markText(txt, terms) {
+  const words = txt.split(/(\b)/);
+  return words.map(tok => {
+    const low = tok.toLowerCase();
+    if (/[a-z0-9]/i.test(tok)) {
+      for (const t of terms) if (termMatchesWord(t, low) >= 20) return "<mark>" + tok + "</mark>";
+    }
+    return tok;
+  }).join("");
+}
+
+function filterTable() {
+  const q = input.value.trim();
+  const terms = tokenize(q);
+  let visible = 0;
+  const scored = [];
+  allRows.forEach((row, ri) => {
+    Array.from(row.cells).forEach((c, ci) => c.innerHTML = originalHTML[ri][ci]);
+    const text = row.textContent;
+    if (terms.length === 0) { row.style.display = ""; visible++; return; }
+    const sc = scoreRow(text, terms);
+    if (sc === null) { row.style.display = "none"; }
+    else {
+      row.style.display = ""; visible++;
+      Array.from(row.cells).forEach((c, ci) => c.innerHTML = highlightCell(originalHTML[ri][ci], terms));
+      scored.push({ row, sc });
+    }
+  });
+  if (terms.length && scored.length) {
+    scored.sort((a, b) => b.sc - a.sc).forEach(o => tbody.appendChild(o.row));
+  }
+  document.getElementById("count").textContent = visible;
+  document.getElementById("noResults").style.display = visible ? "none" : "block";
+}
+
+function resetAll() {
+  input.value = "";
+  allRows.forEach(r => tbody.appendChild(r));
+  filterTable();
+  input.focus();
+}
+
+const sortDir = {};
+function sortTable(col) {
+  const rows = Array.from(tbody.rows).filter(r => r.style.display !== "none");
+  const asc = !sortDir[col];
+  sortDir[col] = asc;
+  rows.sort((a, b) => {
+    const x = a.cells[col].textContent.trim().toLowerCase();
+    const y = b.cells[col].textContent.trim().toLowerCase();
+    return x.localeCompare(y, undefined, {numeric:true}) * (asc ? 1 : -1);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+const onsetChips = ["Pediatric","Adult"];
+const catChips = ["Hereditary CRC","HBOC","Multi-tumor","Hereditary RCC","Endocrine","Paraganglioma","DNA repair","Pediatric","Hamartoma","Hematologic","Somatic"];
+const termChips = ["microsatellite","two-hit","pheochromocytoma","medullary thyroid","PARP","chromosome breakage","macrocephaly","retinoblastoma"];
+const chipBox = document.getElementById("chips");
+onsetChips.forEach(e => { const c=document.createElement("span"); c.className="chip"; c.style.background="#fde8cf"; c.style.color="#9a5b00"; c.style.borderColor="#f0c08a"; c.textContent=e+" onset"; c.onclick=()=>{ input.value=e; filterTable(); input.focus(); }; chipBox.appendChild(c); });
+catChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip cat"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+termChips.forEach(e => {
+  const c = document.createElement("span");
+  c.className = "chip"; c.textContent = e;
+  c.onclick = () => { input.value = e; filterTable(); input.focus(); };
+  chipBox.appendChild(c);
+});
+
+tbody.addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (tr) tr.classList.toggle("hit");
+});
+
+input.addEventListener("keyup", filterTable);
+fuzzyOn.addEventListener("change", filterTable);
+proxOn.addEventListener("change", filterTable);
+filterTable();
+</script>
+</body>
+</html>
